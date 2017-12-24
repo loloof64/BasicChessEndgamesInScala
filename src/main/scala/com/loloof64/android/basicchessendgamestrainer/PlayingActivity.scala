@@ -287,11 +287,11 @@ class PlayingActivity extends AppCompatActivity() with PromotionPieceChooserDial
     private var playerGoalTextId: Int = -1
     private var playerGoalInAlertMode = false
     private val listAdapter = MovesListAdapter(WeakReference(this), new ItemClickListener() {
-        override def onClick(weakRefContext: WeakReference<Context>, position: Int,
+        override def onClick(weakRefContext: WeakReference[Context], position: Int,
                              positionFen: String, moveToHighlight: MoveToHighlight) {
             if (weakRefContext.get() != null){
                 weakRefContext.get() match {
-                    p:PlayingActivity => {
+                    case p:PlayingActivity => {
                         p.playingBoard.setFromFen(positionFen)
                         if (p.moveToHighlight != null) {
                             p.playingBoard.setHighlightedMove(moveToHighlight.startFile,

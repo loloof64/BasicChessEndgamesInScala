@@ -1,5 +1,6 @@
 package com.loloof64.android.basicchessendgamestrainer.exercise_chooser
 
+import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.PositionGeneratorUtils._
 import com.loloof64.android.basicchessendgamestrainer.R
 
 object Exercises {
@@ -15,10 +16,10 @@ object Exercises {
         ExerciseInfo(mustWin = true, textId = R.string.exercise_knb_k, constraints = KNBvK)
     )
 
-    private val KRRvK = positionGenerator {
+    private val KRRvK = positionGenerator { 
         computerKing {
-                (FileC to FileF).contains(file)
-                && (Rank3 to Rank6).contains(rank)
+            (FileC to FileF).contains(c.file)
+            && (Rank3 to Rank6).contains(c.rank)
         }
 
         otherPiecesCount {
@@ -68,38 +69,38 @@ object Exercises {
     }
 
     private val KPvK_I = positionGenerator {
-            playerKing {
-                    rank == (if (playerHasWhite) Rank6 else Rank3)
-                    && (FileB to FileG).contains(file)
-            }
+        playerKing {
+                rank == (if (playerHasWhite) Rank6 else Rank3)
+                && (FileB to FileG).contains(file)
+        }
 
-            computerKing {
-                    rank == if (playerHasWhite) Rank8 else Rank1
-            }
+        computerKing {
+                rank == (if (playerHasWhite) Rank8 else Rank1)
+        }
 
-            kingsMutualConstraint {
-                playerKingFile == computerKingFile
-            }
+        kingsMutualConstraint {
+            playerKingFile == computerKingFile
+        }
 
-            otherPiecesCount {
-                add(Pawn belongingTo Player inCount 1)
-            }
+        otherPiecesCount {
+            add(Pawn belongingTo Player inCount 1)
+        }
 
-            otherPiecesGlobalConstraint {
-                set(Pawn belongingTo Player) {
-                    (rank == if (playerHasWhite) Rank5 else Rank4)
-                    && (file == playerKingFile)
-                }
+        otherPiecesGlobalConstraint {
+            set(Pawn belongingTo Player) {
+                (rank == (if (playerHasWhite) Rank5 else Rank4))
+                && (file == playerKingFile)
             }
+        }
     }
 
     private val KPvK_II = positionGenerator {
         playerKing {
-                rank == if (playerHasWhite) Rank1 else Rank8
+                rank == (if (playerHasWhite) Rank1 else Rank8)
         }
 
         computerKing {
-                rank == if (playerHasWhite) Rank4 else Rank5
+                rank == (if (playerHasWhite) Rank4 else Rank5)
         }
 
         kingsMutualConstraint {
@@ -112,7 +113,7 @@ object Exercises {
 
         otherPiecesGlobalConstraint {
             set(Pawn belongingTo Computer) {
-                (rank in if (playerHasWhite) (Rank3 to Rank5) else (Rank4 to Rank6))
+                (if (playerHasWhite) (Rank3 to Rank5) else (Rank4 to Rank6)).contains(rank)
                 && (file == playerKingFile)
             }
         }
@@ -134,10 +135,10 @@ object Exercises {
 
         otherPiecesGlobalConstraint {
             set(Pawn belongingTo Player){
-                rank == if (playerHasWhite) Rank5 else Rank4
+                rank == (if (playerHasWhite) Rank5 else Rank4)
             }
             set(Pawn belongingTo Computer){
-                rank == if (playerHasWhite) Rank7 else Rank2
+                rank == (if (playerHasWhite) Rank7 else Rank2)
             }
         }
 

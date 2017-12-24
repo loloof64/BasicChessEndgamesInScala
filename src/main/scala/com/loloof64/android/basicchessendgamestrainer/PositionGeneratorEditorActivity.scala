@@ -45,13 +45,13 @@ class PositionGeneratorEditorActivity extends AppCompatActivity() {
     }
 
 
-    override def onCreateOptionsMenu(menu: Menu): Boolean {
+    override def onCreateOptionsMenu(menu: Menu): Boolean =  {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_position_generator_editor, menu)
         return true
     }
 
-    override def onOptionsItemSelected(item: MenuItem): Boolean {
+    override def onOptionsItemSelected(item: MenuItem): Boolean = {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -71,13 +71,13 @@ class PositionGeneratorEditorActivity extends AppCompatActivity() {
      */
     class SectionsPagerAdapter(fm: FragmentManager) extends FragmentPagerAdapter(fm) {
 
-        override def getItem(position: Int): Fragment {
+        override def getItem(position: Int): Fragment = {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             return PlaceholderFragment.newInstance(position + 1)
         }
 
-        override def getCount(): Int {
+        override def getCount(): Int = {
             // Show 3 total pages.
             return 3
         }
@@ -89,7 +89,7 @@ class PositionGeneratorEditorActivity extends AppCompatActivity() {
     class PlaceholderFragment extends Fragment() {
 
         override def onCreateView(inflater: LayoutInflater, container: ViewGroup,
-                                  savedInstanceState: Bundle): View {
+                                  savedInstanceState: Bundle): View = {
             val rootView = inflater.inflate(R.layout.fragment_position_generator_editor, container, false)
             rootView.section_label.text = getString(R.string.section_format, arguments.getInt(ARG_SECTION_NUMBER))
             return rootView
@@ -108,7 +108,7 @@ class PositionGeneratorEditorActivity extends AppCompatActivity() {
             * Returns a new instance of this fragment for the given section
             * number.
             */
-        def newInstance(sectionNumber: Int): PlaceholderFragment {
+        def newInstance(sectionNumber: Int): PlaceholderFragment = {
             val fragment = PlaceholderFragment()
             val args = Bundle()
             args.putInt(ARG_SECTION_NUMBER, sectionNumber)

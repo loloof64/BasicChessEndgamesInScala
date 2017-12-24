@@ -98,19 +98,19 @@ class PositionConstraints {
     }
 
     def otherPiecesCount(constraint: (OtherPiecesCountConstraints) => Unit) {
-        otherPiecesCountConstraintInstance.constraint()
+        otherPiecesCountConstraintInstance = constraint
     }
 
     def otherPiecesGlobalConstraint(constraint: (OtherPiecesGlobalConstraint) => Unit) {
-        otherPiecesGlobalConstraintInstance.constraint()
+        otherPiecesGlobalConstraintInstance = constraint
     }
 
     def otherPiecesMutualConstraint(constraint: (OtherPiecesMutualConstraint) => Unit) {
-        otherPiecesMutualConstraintInstance.constraint()
+        otherPiecesMutualConstraintInstance = constraint
     }
 
     def otherPiecesIndexedConstraint(constraint: (OtherPiecesIndexedConstraint) => Unit) {
-        otherPiecesIndexedConstraintInstance.constraint()
+        otherPiecesIndexedConstraintInstance = constraint
     }
 }
 

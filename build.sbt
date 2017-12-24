@@ -5,6 +5,7 @@ versionCode := Some(1)
 versionName := Some("1.0.8")
 platformTarget := "android-27"
 minSdkVersion in Android :="16"
+scalaVersion :="2.11.12"
 
 resolvers += "Google Maven Repository" at "https://maven.google.com"
 
