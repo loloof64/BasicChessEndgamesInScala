@@ -11,14 +11,13 @@ import com.loloof64.android.basicchessendgamestrainer.R
 import java.lang.Math.abs
 import java.util.logging.Logger
 
-class class PromotionInfo(val startFile: Int, val startRank: Int,
+case class PromotionInfo(val startFile: Int, val startRank: Int,
                          val endFile: Int, val endRank: Int)
 
-class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSet,
-                             defStyleAttr: Int) : BoardComponent(context, attrs, defStyleAttr),
-                                                    SimpleUciObserver{
+case class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSet,
+                             defStyleAttr: Int) extends BoardComponent(context, attrs, defStyleAttr) with SimpleUciObserver{
 
-    private def moveStringToFAN(moveStr: String, move: Move): String {
+    private def moveStringToFAN(moveStr: String, move: Move): String = {
         val board = new Board()
         board.loadFromFEN(this)
         val moveList = new MoveList(board.fen)
@@ -26,7 +25,7 @@ class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSe
         return moveList.toFANArray()(0)
     }
 
-    def isDrawByRepetitions():Boolean {
+    def isDrawByRepetitions():Boolean = {
         val historySize = _relatedPosition.history.size
         val i = Math.min(historySize - 1, _relatedPosition.getHalfMoveCounter())
         var rept = 0
@@ -36,7 +35,7 @@ class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSe
             while (x <= i) {
                 val k = _relatedPosition.getHistory().get(historySize - x - 1)
                 if (k == lastKey) {
-                    rept++
+                    rept += 1
                     if (rept >= 2) {
                         return true
                     }
@@ -82,7 +81,7 @@ class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSe
             else R.string.empty_string
 
             context match {
-                p:PlayingActivity => p.setPlayerGoalTextId(stringId, false)
+                case p:PlayingActivity => p.setPlayerGoalTextId(stringId, false)
             }
             _waitingForPlayerGoal = false
         }
@@ -112,7 +111,7 @@ class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSe
         EngineInteraction.evaluate(_relatedPosition.fen)
     }
 
-    override def relatedPosition(): Board {
+    override def relatedPosition(): Board = {
         return _relatedPosition
     }
 
@@ -120,11 +119,11 @@ class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSe
         _relatedPosition.loadFromFEN(positionFEN)
     }
 
-    override def highlightedTargetCell(): SquareCoordinates {
+    override def highlightedTargetCell(): SquareCoordinates = {
         return _highlightedTargetCell
     }
 
-    override def highlightedStartCell(): SquareCoordinates {
+    override def highlightedStartCell(): SquareCoordinates = {
         return _highlightedStartCell
     }
 
@@ -147,7 +146,7 @@ class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSe
     private var _pendingPromotionInfo:PromotionInfo = null
 
     @SuppressWarnings("ClickableViewAccessibility")
-    override def onTouchEvent(event: MotionEvent): Boolean {
+    override def onTouchEvent(event: MotionEvent): Boolean = {
         val whiteTurn = _relatedPosition.sideToMove == Side.WHITE
         val notPlayerTurn = _playerHasWhite != whiteTurn
         if (notPlayerTurn || _gameFinished) return true
@@ -184,7 +183,7 @@ class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSe
                             (matchingMoveStartCell == playerMoveStartCell) && (matchingMoveEndCell == playerMoveEndCell)
                         }
 
-                        val isPromotionMove = matchingMoves.isNotEmpty() && matchingMoves[0].promotion != Piece.NONE
+                        val isPromotionMove = matchingMoves.isNotEmpty() && matchingMoves(0).promotion != Piece.NONE
 
                         if (isPromotionMove) {
                             _pendingPromotionInfo = PromotionInfo(startFile, startRank, endFile, endRank)
@@ -196,7 +195,7 @@ class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSe
                                 if (!sameCellSelected) reactForIllegalMove()
                             } else {
                                 updateHighlightedMove()
-                                val move = matchingMoves[0]
+                                val move = matchingMoves(0)
                                 addMoveToList(move, moveStringToFAN(_relatedPosition.fen, move))
                             }
                         }
@@ -246,7 +245,7 @@ class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSe
         try {
             _gameFinished = gameFinished
             context match{
-                p:PlayingActivity =>
+                case p:PlayingActivity =>
                     if (_gameFinished) {
                         p.activatePositionNavigation()
                     } else {
@@ -277,9 +276,7 @@ class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSe
         try {
             _gameFinished = false
             context match{
-                p:PlayingActivity => withp{
-                    disallowPositionNavigation()
-                }
+                case p:PlayingActivity => p.disallowPositionNavigation()
             }
             _startedToWriteMoves = false
             _moveToHighlightFrom = null
@@ -296,11 +293,11 @@ class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSe
             invalidate()
         }
         catch {
-            _:IllegalArgumentException => Logger.getLogger("BasicChessEndgamesTrainer").severe(s"Position $startFen is invalid and could not be load.")
+            case _:IllegalArgumentException => Logger.getLogger("BasicChessEndgamesTrainer").severe(s"Position $startFen is invalid and could not be load.")
         }
     }
 
-    def isWhiteToPlay() : Boolean {
+    def isWhiteToPlay() : Boolean = {
         return _relatedPosition.sideToMove == Side.WHITE
     }
 
@@ -312,11 +309,11 @@ class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSe
     }
 
     def checkIfGameFinished() {
-        def checkIfGameFinished(finishMessageId: Int, finishTest: => Boolean) : Boolean {
+        def checkIfGameFinished(finishMessageId: Int, finishTest: => Boolean) : Boolean = {
             if (finishTest){
                 _gameFinished = true
                 context match{
-                    p:PlayingActivity => withp{
+                    case p:PlayingActivity => withp{
                         setPlayerGoalTextId(finishMessageId, alertMode = true)
                         activatePositionNavigation()
                     }
@@ -334,7 +331,7 @@ class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSe
 
     private def addMoveToList(move: Move, moveFan: String) {
         when (context) {
-            p:PlayingActivity => {
+            case p:PlayingActivity => {
 
                 val isWhiteTurnBeforeMove = _relatedPosition.sideToMove == Side.WHITE
 
@@ -376,9 +373,9 @@ class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSe
     }
 
     def validatePromotionMove(givenPromotionPiece: Piece) {
-        when(_pendingPromotionInfo) {
-            null => {}
-            else => {
+        _pendingPromotionInfo match {
+            case null => {}
+            case _ => {
 
                 val startSquare = buildSquare(file = _pendingPromotionInfo.startFile,
                         rank = _pendingPromotionInfo.startRank)
@@ -396,7 +393,7 @@ class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSe
                 }
                 if (matchingMoves.isEmpty()) Logger.getLogger("BasicChessEndgamesTrainer").severe("Illegal move ! (When validating promotion)")
                 else {
-                    val move = matchingMoves[0]
+                    val move = matchingMoves(0)
                     addMoveToList(move, moveStringToFAN(_relatedPosition.fen, move))
                 }
                 _pendingPromotionInfo = null
@@ -409,17 +406,17 @@ class PlayableAgainstComputerBoardComponent(context: Context, attrs: AttributeSe
     def gameFinished() = _gameFinished
     def hasStartedToWriteMoves() = _startedToWriteMoves
 
-    private def getMoveNumber(): Int {
+    private def getMoveNumber(): Int = {
         val c = _relatedPosition.moveCounter
         return if (_blackStartedTheGame) ((c-(c%2))/2) + 1
             else (c / 2) + 1
     }
 
     override def setHighlightedMove(fromFile: Int, fromRank: Int, toFile: Int, toRank: Int) {
-        if (fromFile !in 0..7) throw IllegalArgumentException()
-        if (fromRank !in 0..7) throw IllegalArgumentException()
-        if (toFile !in 0..7) throw IllegalArgumentException()
-        if (toRank !in 0..7) throw IllegalArgumentException()
+        if (!(0 to 7).contains(fromFile)) throw IllegalArgumentException()
+        if (!(0 to 7).contains(fromRank)) throw IllegalArgumentException()
+        if (!(0 to 7).contains(toFile)) throw IllegalArgumentException()
+        if (!(0 to 7).contains(toRank)) throw IllegalArgumentException()
 
         super.setHighlightedMove(fromFile, fromRank, toFile, toRank)
         _moveToHighlightFrom = buildSquare(file = fromFile, rank = fromRank)

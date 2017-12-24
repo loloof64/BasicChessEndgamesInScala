@@ -27,7 +27,7 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
     private val typedArray = context.obtainStyledAttributes(attrs, R.styleable.BoardComponent)
     private val computed = typedArray.getInt(R.styleable.BoardComponent_min_dimension_percentage, 100)
     typedArray.recycle()
-    private val = minAvailableSpacePercentage = computed
+    private val minAvailableSpacePercentage = computed
 
     def computeMinAvailableSpacePercentage():Int = minAvailableSpacePercentage
 
@@ -102,7 +102,7 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
             canvas.drawText(s"$letter", x, y2, fontPaint)
         }
 
-        for ((rank, digit) in rankCoords.zipWithIndex) {
+        for ((rank, digit) <- rankCoords.zipWithIndex) {
             val x1 = (cellSize * 0.15).toFloat
             val x2 = (cellSize * 8.65).toFloat
             val y = (cellSize * 1.2 + rank * cellSize).toFloat
@@ -115,8 +115,8 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
     }
 
     private def drawPieces(canvas: Canvas, cellSize: Int) {
-        for (cellRank in (0 until 8)) {
-            for (cellFile in (0 until 8)) {
+        for (cellRank <- (0 until 8)) {
+            for (cellFile <- (0 until 8)) {
                 val piece = relatedPosition().getPiece(buildSquare(cellRank, cellFile))
                 if (piece != Piece.NONE) {
                     val imageRes = piece match {
@@ -202,18 +202,18 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
         if (! ((0 to 7) contains to.file) ) return
         if (! ((0 to 7) contains to.rank) ) return
 
-        val paint = Paint()
+        val paint = new Paint()
 
-        val fromPointX = (cellSize * if (reversed) (8 - from.file) else (from.file+1)).toFloat
-        val fromPointY = (cellSize * if (reversed) (from.rank+1) else (8 - from.rank)).toFloat
-        val toPointX = (cellSize * if (reversed) (8 - to.file) else (to.file+1)).toFloat
-        val toPointY = (cellSize * if (reversed) (to.rank+1) else (8 - to.rank)).toFloat
+        val fromPointX = (cellSize * (if (reversed) (8 - from.file) else (from.file+1))).toFloat
+        val fromPointY = (cellSize * (if (reversed) (from.rank+1) else (8 - from.rank))).toFloat
+        val toPointX = (cellSize * (if (reversed) (8 - to.file) else (to.file+1))).toFloat
+        val toPointY = (cellSize * (if (reversed) (to.rank+1) else (8 - to.rank))).toFloat
 
-        val angleDegrees = Math.toDegrees(Math.atan2(toPointY.toDouble() - fromPointY.toDouble(),
-                toPointX.toDouble() - fromPointX.toDouble())).toFloat
+        val angleDegrees = Math.toDegrees(Math.atan2(toPointY.toDouble - fromPointY.toDouble,
+                toPointX.toDouble - fromPointX.toDouble)).toFloat
 
-        val distance = Math.sqrt(Math.pow((toPointX - fromPointX).toDouble(), 2.0) +
-                Math.pow((toPointY - fromPointY).toDouble(), 2.0)).toFloat
+        val distance = Math.sqrt(Math.pow((toPointX - fromPointX).toDouble, 2.0) +
+                Math.pow((toPointY - fromPointY).toDouble, 2.0)).toFloat
 
         val arrowLength = distance * 0.15f
 
@@ -251,10 +251,10 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
 
     def setHighlightedMove(fromFile: Int, fromRank: Int,
                            toFile: Int, toRank: Int){
-        _highlightedMoveFrom = new SquareCoordinates(file =  if (fromFile in 0..7) fromFile else -1,
-                rank = if (fromRank in 0..7) fromRank else -1)
-        _highlightedMoveTo = new SquareCoordinates(file = if (toFile in 0..7) toFile else -1,
-                rank = if (toRank in 0..7) toRank else -1)
+        _highlightedMoveFrom = new SquareCoordinates(file =  if ((0 to 7).contains(fromFile)) fromFile else -1,
+                rank = if ((0 to 7).contains(fromRank)) fromRank else -1)
+        _highlightedMoveTo = new SquareCoordinates(file = if ((0 to 7).contains(toFile)) toFile else -1,
+                rank = if ((0 to 7).contains(toRank)) toRank else -1)
         invalidate()
     }
 

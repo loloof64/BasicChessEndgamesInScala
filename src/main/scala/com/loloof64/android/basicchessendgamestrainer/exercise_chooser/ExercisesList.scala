@@ -17,8 +17,8 @@ object Exercises {
 
     private val KRRvK = positionGenerator {
         computerKing {
-                file in FileC..FileF
-                && rank in Rank3..Rank6
+                (FileC to FileF).contains(file)
+                && (Rank3 to Rank6).contains(rank)
         }
 
         otherPiecesCount {
@@ -28,8 +28,8 @@ object Exercises {
 
     private val KQvK = positionGenerator {
         computerKing {
-                file in FileC..FileF
-                && rank in Rank3..Rank6
+                (FileC to FileF).contains(file)
+                && (Rank3 to Rank6).contains(rank)
         }
 
         otherPiecesCount {
@@ -39,8 +39,8 @@ object Exercises {
 
     private val KRvK = positionGenerator {
         computerKing {
-                file in FileC..FileF
-                && rank in Rank3..Rank6
+                (FileC to FileF).contains(file)
+                && (Rank3 to Rank6).contains(rank)
         }
 
         otherPiecesCount {
@@ -50,8 +50,8 @@ object Exercises {
 
     private val KBBvK = positionGenerator {
         computerKing {
-                file in FileC..FileF
-                && rank in Rank3..Rank6
+                (FileC to FileF).contains(file)
+                && (Rank3 to Rank6).contains(rank)
         }
 
         otherPiecesCount {
@@ -70,7 +70,7 @@ object Exercises {
     private val KPvK_I = positionGenerator {
             playerKing {
                     rank == (if (playerHasWhite) Rank6 else Rank3)
-                    && file in FileB..FileG
+                    && (FileB to FileG).contains(file)
             }
 
             computerKing {
@@ -112,7 +112,7 @@ object Exercises {
 
         otherPiecesGlobalConstraint {
             set(Pawn belongingTo Computer) {
-                (rank in if (playerHasWhite) Rank3..Rank5 else Rank4..Rank6)
+                (rank in if (playerHasWhite) (Rank3 to Rank5) else (Rank4 to Rank6))
                 && (file == playerKingFile)
             }
         }
@@ -153,8 +153,8 @@ object Exercises {
 
     private val KNBvK = positionGenerator {
         computerKing {
-            file in FileC..FileF
-            && rank in Rank3..Rank6
+            (FileC to FileF).contains(file)
+            && (Rank3 to Rank6).contains(rank)
         }
 
         otherPiecesCount {

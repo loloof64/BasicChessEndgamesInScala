@@ -14,13 +14,13 @@ trait ItemClickListener {
 }
 
 object ExercisesListAdapter {
-    class ViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
+    class ViewHolder(val textView: TextView) extends RecyclerView.ViewHolder(textView)
 }
 
 class ExercisesListAdapter(private val exercisesList: List[ExerciseInfo],
                            private val itemClickListener: ItemClickListener) extends RecyclerView.Adapter[ViewHolder](){
 
-    override def onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override def onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = {
         val layout = LayoutInflater.from(parent.context).inflate(R.layout.exercises_list_row, parent, false).asInstanceOf[LinearLayout]
         val textView = layout.findViewById(R.id.exercise_list_row_value).asInstanceOf[TextView]
         layout.removeView(textView)
@@ -28,7 +28,7 @@ class ExercisesListAdapter(private val exercisesList: List[ExerciseInfo],
     }
 
     override def onBindViewHolder(holder: ViewHolder, position: Int) {
-        def getColor(colorId: Int) : Int {
+        def getColor(colorId: Int) : Int = {
             val context = MyApplication.getApplicationContext()
             return ResourcesCompat.getColor(context.resources, colorId, null)
         }
@@ -41,7 +41,7 @@ class ExercisesListAdapter(private val exercisesList: List[ExerciseInfo],
         )
     }
 
-    override def getItemCount(): Int {
+    override def getItemCount(): Int = {
         return exercisesList.size
     }
 }

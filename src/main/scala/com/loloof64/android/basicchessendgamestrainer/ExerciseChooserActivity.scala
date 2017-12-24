@@ -23,7 +23,8 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.{Menu, MenuItem}
-import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.{ExercisesListAdapter, ItemClickListener, Exercises.availableGenerators}
+import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.{ExercisesListAdapter, ItemClickListener}
+import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.Exercises.availableGenerators
 import com.loloof64.android.basicchessendgamestrainer.playing_activity.EngineInteraction
 import kotlinx.android.synthetic.main.activity_exercise_chooser._
 
@@ -49,15 +50,15 @@ class ExerciseChooserActivity extends AppCompatActivity {
         })
     }
 
-    override def onCreateOptionsMenu(menu: Menu): Boolean {
+    override def onCreateOptionsMenu(menu: Menu): Boolean =  {
         menuInflater.inflate(R.menu.menu_exercise_chooser, menu)
         return true
     }
 
-    override def onOptionsItemSelected(item: MenuItem): Boolean {
+    override def onOptionsItemSelected(item: MenuItem): Boolean = {
         return item.itemId match {
             case R.id.action_help => {
-                val intent = Intent(this, HelpActivity::class.java)
+                val intent = Intent(this, HelpActivity.getClass)
                 startActivity(intent)
                 return true
             }

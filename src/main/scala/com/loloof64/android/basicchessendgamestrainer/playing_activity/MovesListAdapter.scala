@@ -13,19 +13,19 @@ case class MoveToHighlight(val startFile: Int, val startRank : Int,
                            val endFile: Int, val endRank : Int)
 
 abstract class ItemClickListener {
-    def onClick(weakRefContext: WeakReference<Context>, position: Int,
+    def onClick(weakRefContext: WeakReference[Context], position: Int,
                          positionFen: String, moveToHighlight: MoveToHighlight)
 }
 
 object MovesListAdapter {
-    class ViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
+    class ViewHolder(val textView: TextView) extends RecyclerView.ViewHolder(textView)
 }
 
-class MovesListAdapter(private val weakRefContext: WeakReference<Context>, private val itemClickListener: ItemClickListener) extends RecyclerView.Adapter<MovesListAdapter.Companion.ViewHolder>() {
+class MovesListAdapter(private val weakRefContext: WeakReference[Context], private val itemClickListener: ItemClickListener) extends RecyclerView.Adapter[ViewHolder]() {
     @SuppressWarnings("DEPRECATION")
     private def getColor(colorResId: Int): Int = MyApplication.getApplicationContext().resources.getColor(colorResId)
 
-    override def onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override def onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = {
         val layout = LayoutInflater.from(parent.context).inflate(
                 R.layout.playing_activity_moves_list_single_item, parent, false).asInstanceOf[LinearLayout]
         val txtView = layout.findViewById(R.id.moves_list_view_item).asInstanceOf[TextView]
@@ -52,7 +52,7 @@ class MovesListAdapter(private val weakRefContext: WeakReference<Context>, priva
         }
     }
 
-    override def getItemCount(): Int {
+    override def getItemCount(): Int = {
         return inputsList.size
     }
 

@@ -3,7 +3,7 @@ package com.loloof64.android.basicchessendgamestrainer.exercise_chooser
 import com.github.bhlangonijr.chesslib._
 import java.util._
 import java.util.logging.Logger
-import com.github.bhlangonijr.chesslib.Side as LibSide
+import com.github.bhlangonijr.chesslib.{Side => LibSide}
 
 class PositionGenerationLoopException extends Exception()
 
@@ -27,7 +27,7 @@ class PositionGenerator(private val constraints : PositionConstraints) {
             rank = _random.nextInt(8)
     )
 
-    private def buildPositionOrNullIfCellAlreadyOccupied(startFen: String, pieceToAdd: Piece, pieceCell: Square): Board? {
+    private def buildPositionOrNullIfCellAlreadyOccupied(startFen: String, pieceToAdd: Piece, pieceCell: Square): Board = {
         val builtPosition = Board()
         builtPosition.loadFromFEN(startFen)
 
@@ -44,7 +44,7 @@ class PositionGenerator(private val constraints : PositionConstraints) {
             sideToMove = if (playerHasWhite) LibSide.BLACK else LibSide.WHITE
         }.isKingAttacked
 
-    def generatePosition(playerHasWhite: Boolean = true): String {
+    def generatePosition(playerHasWhite: Boolean = true): String =  {
         _position.loadFromFEN( s"8/8/8/8/8/8/8/8 ${if (playerHasWhite) 'w' else 'b'} - - 0 1")
         _position.halfMoveCounter = 0
         _position.moveCounter = 1
@@ -66,7 +66,7 @@ class PositionGenerator(private val constraints : PositionConstraints) {
 
     private def placeKings(playerHasWhite: Boolean){
         var loopSuccess = false
-        for (iters in 0..maxLoopsIterations){ // setting up player king
+        for (iters <- 0 to maxLoopsIterations){ // setting up player king
 
             val kingCell = generateCell()
             val tempPosition = buildPositionOrNullIfCellAlreadyOccupied(
@@ -89,7 +89,7 @@ class PositionGenerator(private val constraints : PositionConstraints) {
         if (!loopSuccess) throw PositionGenerationLoopException()
 
         loopSuccess = false
-        for (iters in 0..maxLoopsIterations){  // setting up enemy king
+        for (iters <- 0 to maxLoopsIterations){  // setting up enemy king
 
             val kingCell = generateCell()
 
@@ -136,7 +136,7 @@ class PositionGenerator(private val constraints : PositionConstraints) {
             val savedCoordinates = arrayListOf<BoardCoordinate>()
             (0 until count).foreach { index =>
                 var loopSuccess = false
-                for (loopIter in 0..maxLoopsIterations) {
+                for (loopIter <-  0 to maxLoopsIterations) {
                     val isAPieceOfPlayer = kind.side == Side.player
                     val isWhitePiece = (isAPieceOfPlayer && playerHasWhite)
                             || (!isAPieceOfPlayer && !playerHasWhite)

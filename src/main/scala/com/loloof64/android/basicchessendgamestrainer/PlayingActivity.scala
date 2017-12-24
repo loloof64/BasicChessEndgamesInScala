@@ -56,7 +56,7 @@ object PlayingActivity {
     val standardFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 }
 
-class PlayingActivity extends AppCompatActivity(), PromotionPieceChooserDialogFragment.Companion.Listener {
+class PlayingActivity extends AppCompatActivity() with PromotionPieceChooserDialogFragment.Companion.Listener {
 
     @SuppressWarnings("DEPRECATION")
     private def findColor(colorResId: Int): Int = resources.getColor(colorResId)
@@ -88,7 +88,7 @@ class PlayingActivity extends AppCompatActivity(), PromotionPieceChooserDialogFr
 
         EngineInteraction.initStockfishProcessIfNotDoneYet()
 
-        generatorIndex = intent.extras.getInt(generatorIndexKey) : 0
+        generatorIndex = intent.extras.getInt(generatorIndexKey)
         val generatedPosition = PositionGenerator(availableGenerators[generatorIndex].constraints).generatePosition(random.nextBoolean())
         if (generatedPosition.isNotEmpty()) {
             newGame(generatedPosition)
@@ -165,15 +165,15 @@ class PlayingActivity extends AppCompatActivity(), PromotionPieceChooserDialogFr
         }
     }
 
-    override def onCreateOptionsMenu(menu: Menu): Boolean {
+    override def onCreateOptionsMenu(menu: Menu): Boolean = {
         menuInflater.inflate(R.menu.menu_playing, menu)
         return true
     }
 
-    override def onOptionsItemSelected(item: MenuItem): Boolean {
+    override def onOptionsItemSelected(item: MenuItem): Boolean = {
         return item.itemId match {
             case R.id.action_help => {
-                val intent = Intent(this, HelpActivity::class.java)
+                val intent = Intent(this, HelpActivity.getClass)
                 startActivity(intent)
                 return true
             }
@@ -211,7 +211,7 @@ class PlayingActivity extends AppCompatActivity(), PromotionPieceChooserDialogFr
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(R.string.restarting_exercise_alert_title)
                 .setMessage(R.string.restarting_exercise_alert_message)
-                .setPositiveButton(R.string.yes, {_, _ =>
+                .setPositiveButton(R.string.yes, {(_, _) =>
                     val exercise = lastExercise
                     if (exercise != null) newGame(exercise)
                 })
@@ -224,7 +224,7 @@ class PlayingActivity extends AppCompatActivity(), PromotionPieceChooserDialogFr
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(R.string.new_exercise_alert_title)
                 .setMessage(R.string.new_exercise_alert_message)
-                .setPositiveButton(R.string.yes, {_, _ =>
+                .setPositiveButton(R.string.yes, {(_, _) =>
                     val generatedPosition = PositionGenerator(availableGenerators[generatorIndex].constraints).generatePosition(random.nextBoolean())
                     newGame(generatedPosition)
                 })
@@ -264,7 +264,7 @@ class PlayingActivity extends AppCompatActivity(), PromotionPieceChooserDialogFr
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(R.string.quit_exercise_confirmation_title)
                 .setMessage(R.string.quit_exercise_confirmation_message)
-                .setPositiveButton(R.string.yes, {_, _ =>
+                .setPositiveButton(R.string.yes, {(_, _) =>
                     super.onBackPressed()
                 })
                 .setNegativeButton(R.string.no, null)
@@ -286,7 +286,7 @@ class PlayingActivity extends AppCompatActivity(), PromotionPieceChooserDialogFr
     private var random = Random()
     private var playerGoalTextId: Int = -1
     private var playerGoalInAlertMode = false
-    private val listAdapter = MovesListAdapter(WeakReference(this), object : ItemClickListener() {
+    private val listAdapter = MovesListAdapter(WeakReference(this), new ItemClickListener() {
         override def onClick(weakRefContext: WeakReference<Context>, position: Int,
                              positionFen: String, moveToHighlight: MoveToHighlight) {
             if (weakRefContext.get() != null){

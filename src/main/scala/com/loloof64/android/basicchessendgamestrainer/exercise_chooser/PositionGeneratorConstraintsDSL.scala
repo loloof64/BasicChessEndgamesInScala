@@ -1,13 +1,19 @@
 package com.loloof64.android.basicchessendgamestrainer.exercise_chooser
 
-@SuppressWarnings("UNUSED")
-def positionGenerator(init: PositionConstraints.() -> Unit) = PositionConstraints().apply(init)
+object PositionGeneratorUtils {
+    @SuppressWarnings("UNUSED")
+    def positionGenerator(init: (PositionConstraints) => Unit): PositionConstraints = {
+        val constraints = new PositionConstraints()
+        constraints(init)
+        constraints
+    }
+}
 
 @SuppressWarnings("UNUSED")
 class PositionConstraints {
-    private var playerKingIndividualConstraintInstance: SingleKingConstraint.() -> Boolean = { true }
-    private var computerKingIndividualConstraintInstance: SingleKingConstraint.() -> Boolean = { true }
-    private var kingsMutualConstraintInstance: KingsMutualConstraint.() -> Boolean = { true }
+    private var playerKingIndividualConstraintInstance: (SingleKingConstraint) => Boolean = { true }
+    private var computerKingIndividualConstraintInstance: (SingleKingConstraint) => Boolean = { true }
+    private var kingsMutualConstraintInstance: (KingsMutualConstraint) => Boolean = { true }
     private var otherPiecesCountConstraintInstance = OtherPiecesCountConstraints()
     private var otherPiecesGlobalConstraintInstance = OtherPiecesGlobalConstraint()
     private var otherPiecesMutualConstraintInstance = OtherPiecesMutualConstraint()
@@ -41,16 +47,16 @@ class PositionConstraints {
     val Player = Side.player
     val Computer = Side.computer
 
-    def checkPlayerKingConstraint(file: Int, rank: Int, playerHasWhite: Boolean): Boolean {
+    def checkPlayerKingConstraint(file: Int, rank: Int, playerHasWhite: Boolean): Boolean = {
         return SingleKingConstraint(file, rank, playerHasWhite).playerKingIndividualConstraintInstance()
     }
 
-    def checkComputerKingConstraint(file: Int, rank: Int, playerHasWhite: Boolean) : Boolean {
+    def checkComputerKingConstraint(file: Int, rank: Int, playerHasWhite: Boolean) : Boolean =  {
         return SingleKingConstraint(file, rank, playerHasWhite).computerKingIndividualConstraintInstance()
     }
 
     def checkKingsMutualConstraint(playerKingFile: Int, playerKingRank: Int,
-                                   computerKingFile: Int, computerKingRank: Int, playerHasWhite: Boolean) : Boolean {
+                                   computerKingFile: Int, computerKingRank: Int, playerHasWhite: Boolean) : Boolean = {
         return KingsMutualConstraint(playerKingFile, playerKingRank, computerKingFile, computerKingRank, playerHasWhite).kingsMutualConstraintInstance()
     }
 
@@ -60,50 +66,50 @@ class PositionConstraints {
                                         file: Int, rank: Int,
                                         playerHasWhite: Boolean,
                                         playerKingFile : Int, playerKingRank: Int,
-                                        computerKingFile: Int, computerKingRank: Int) : Boolean {
+                                        computerKingFile: Int, computerKingRank: Int) : Boolean = {
         return otherPiecesGlobalConstraintInstance(file, rank, playerHasWhite, playerKingFile, playerKingRank, computerKingFile, computerKingRank).checkConstraint(pieceKind)
     }
 
     def checkOtherPieceMutualConstraint(pieceKind: PieceKind,
                                         firstPieceFile: Int, firstPieceRank: Int,
                                         secondPieceFile: Int, secondPieceRank: Int,
-                                        playerHasWhite: Boolean) : Boolean {
+                                        playerHasWhite: Boolean) : Boolean =  {
         return otherPiecesMutualConstraintInstance(firstPieceFile, firstPieceRank, secondPieceFile, secondPieceRank, playerHasWhite).checkConstraint(pieceKind)
     }
 
     def checkOtherPieceIndexedConstraint(pieceKind: PieceKind,
                                          apparitionIndex: Int,
                                          file: Int, rank: Int,
-                                         playerHasWhite: Boolean) : Boolean {
+                                         playerHasWhite: Boolean) : Boolean = {
         return otherPiecesIndexedConstraintInstance(apparitionIndex, file, rank, playerHasWhite).checkConstraint(pieceKind)
     }
 
-    def playerKing(constraint: SingleKingConstraint.() -> Boolean) {
+    def playerKing(constraint: (SingleKingConstraint) => Boolean) {
         playerKingIndividualConstraintInstance = constraint
     }
 
-    def computerKing(constraint: SingleKingConstraint.() -> Boolean) {
+    def computerKing(constraint: (SingleKingConstraint) => Boolean) {
         computerKingIndividualConstraintInstance = constraint
     }
 
 
-    def kingsMutualConstraint(constraint: KingsMutualConstraint.() -> Boolean){
+    def kingsMutualConstraint(constraint: (KingsMutualConstraint) => Boolean){
         kingsMutualConstraintInstance = constraint
     }
 
-    def otherPiecesCount(constraint: OtherPiecesCountConstraints.() -> Unit) {
+    def otherPiecesCount(constraint: (OtherPiecesCountConstraints) => Unit) {
         otherPiecesCountConstraintInstance.constraint()
     }
 
-    def otherPiecesGlobalConstraint(constraint: OtherPiecesGlobalConstraint.() -> Unit) {
+    def otherPiecesGlobalConstraint(constraint: (OtherPiecesGlobalConstraint) => Unit) {
         otherPiecesGlobalConstraintInstance.constraint()
     }
 
-    def otherPiecesMutualConstraint(constraint: OtherPiecesMutualConstraint.() -> Unit) {
+    def otherPiecesMutualConstraint(constraint: (OtherPiecesMutualConstraint) => Unit) {
         otherPiecesMutualConstraintInstance.constraint()
     }
 
-    def otherPiecesIndexedConstraint(constraint: OtherPiecesIndexedConstraint.() -> Unit) {
+    def otherPiecesIndexedConstraint(constraint: (OtherPiecesIndexedConstraint) => Unit) {
         otherPiecesIndexedConstraintInstance.constraint()
     }
 }
@@ -137,7 +143,7 @@ class OtherPiecesCountConstraints {
 @SuppressWarnings("UNUSED")
 class OtherPiecesGlobalConstraint {
     import scala.collection.mutable.HashMap
-    private var allConstraints: HashMap[PieceKind, OtherPiecesGlobalConstraint.() -> Boolean] = new HashMap()
+    private var allConstraints: HashMap[PieceKind, (OtherPiecesGlobalConstraint) => Boolean] = new HashMap()
 
     private var _file:Int = 0
     def file: Int = _file
@@ -163,7 +169,7 @@ class OtherPiecesGlobalConstraint {
     def apply(file: Int, rank: Int,
                         playerHasWhite: Boolean,
                         playerKingFile: Int, playerKingRank: Int,
-                        computerKingFile: Int, computerKingRank: Int) : OtherPiecesGlobalConstraint {
+                        computerKingFile: Int, computerKingRank: Int) : OtherPiecesGlobalConstraint = {
         this.file = file
         this.rank = rank
         this.playerHasWhite = playerHasWhite
@@ -175,13 +181,13 @@ class OtherPiecesGlobalConstraint {
         return this
     }
 
-    def set(pieceKind: PieceKind, constraint: OtherPiecesGlobalConstraint.() -> Boolean){
+    def set(pieceKind: PieceKind, constraint: (OtherPiecesGlobalConstraint) => Boolean){
         allConstraints.put(pieceKind, constraint)
     }
 
-    def checkConstraint(pieceKind: PieceKind) : Boolean {
+    def checkConstraint(pieceKind: PieceKind) : Boolean = {
         // If no constraint available then condition is considered as met.
-        return allConstraints[pieceKind]?.invoke(this) ?: true
+        return allConstraints[pieceKind].invoke(this)
     }
 }
 
@@ -190,7 +196,8 @@ class OtherPiecesGlobalConstraint {
  */
 @SuppressWarnings("UNUSED")
 class OtherPiecesMutualConstraint {
-    private var allConstraints: MutableMap<PieceKind, OtherPiecesMutualConstraint.() -> Boolean> = mutableMapOf()
+    import scala.collection.mutable.MutableMap
+    private var allConstraints: MutableMap[PieceKind, (OtherPiecesMutualConstraint) => Boolean] = new MutableMap()
 
     private var _firstPieceFile: Int = 0
     def firstPieceFile: Int = _firstPieceFile
@@ -207,13 +214,13 @@ class OtherPiecesMutualConstraint {
     private var _playerHasWhite: Boolean = true
     def playerHasWhite : Boolean = _playerHasWhite
 
-    def set(pieceKind: PieceKind, constraint: OtherPiecesMutualConstraint.() -> Boolean){
+    def set(pieceKind: PieceKind, constraint: (OtherPiecesMutualConstraint) => Boolean){
         allConstraints.put(pieceKind, constraint)
     }
 
     def apply(firstPieceFile: Int, firstPieceRank: Int,
                secondPieceFile: Int, secondPieceRank: Int,
-               playerHasWhite: Boolean) : OtherPiecesMutualConstraint {
+               playerHasWhite: Boolean) : OtherPiecesMutualConstraint = {
         this.firstPieceFile = firstPieceFile
         this.firstPieceRank = firstPieceRank
         this.secondPieceFile = secondPieceFile
@@ -222,18 +229,20 @@ class OtherPiecesMutualConstraint {
         return this
     }
 
-    def checkConstraint(pieceKind: PieceKind): Boolean {
+    def checkConstraint(pieceKind: PieceKind): Boolean = {
         // If no constraint available then condition is considered as met.
-        return allConstraints[pieceKind]?.invoke(this) ?: true
+        return allConstraints[pieceKind].invoke(this)
     }
 }
 /**
- * Constraint based on the piece kind, its generation index (is it the first, the second, ... ?)
+ * Constraint based on the piece kind, its generation index (is it the first, the second, ... )
  */
 @SuppressWarnings("UNUSED")
 class OtherPiecesIndexedConstraint {
 
-    private var allConstraints: MutableMap<PieceKind, OtherPiecesIndexedConstraint.() -> Boolean> = mutableMapOf()
+    import scala.collection.mutable.MutableMap
+
+    private var allConstraints: MutableMap[PieceKind, (OtherPiecesIndexedConstraint) => Boolean] = new MutableMap()
 
     private var _apparitionIndex: Int = 0
     def apparitionIndex:Int = _apparitionIndex
@@ -247,13 +256,13 @@ class OtherPiecesIndexedConstraint {
     private var _playerHasWhite: Boolean = true
     def playerHasWhite: Boolean = _playerHasWhite
 
-    def set(pieceKind: PieceKind, constraint: OtherPiecesIndexedConstraint.() -> Boolean){
+    def set(pieceKind: PieceKind, constraint: (OtherPiecesIndexedConstraint) => Boolean){
         allConstraints.put(pieceKind, constraint)
     }
 
     def apply(apparitionIndex: Int,
                         file: Int, rank: Int,
-                        playerHasWhite: Boolean) : OtherPiecesIndexedConstraint {
+                        playerHasWhite: Boolean) : OtherPiecesIndexedConstraint = {
         this.apparitionIndex = apparitionIndex
         this.file = file
         this.rank = rank
@@ -261,9 +270,9 @@ class OtherPiecesIndexedConstraint {
         return this
     }
 
-    def checkConstraint(pieceKind: PieceKind): Boolean {
+    def checkConstraint(pieceKind: PieceKind): Boolean = {
         // If no constraint available then condition is considered as met
-        return allConstraints[pieceKind]?.invoke(this) ?: true
+        return allConstraints[pieceKind](this)
     }
 }
 
@@ -286,7 +295,7 @@ class MutualConstraint(val firstPieceFile: Int, firstPieceRank: Int,
 
 object PieceType extends Enumeration {
     type PieceType = Value
-    pawn, knight, bishop, rook, queen, king = Value
+    val pawn, knight, bishop, rook, queen, king = Value
 
     @SuppressWarnings("UNUSED")
     def belongingTo(owner: Side) = PieceKind(pieceType = this, side = owner)
@@ -297,7 +306,7 @@ object PieceType extends Enumeration {
 
 object Side extends Enumeration {
     type Side = Value
-    player, computer = Value
+    val player, computer = Value
 }
 
 case class PieceKind(val pieceType: PieceType.PieceType, val side: Side.Side)

@@ -34,11 +34,11 @@ class ProcessCommunicator(process: Process) extends Runnable {
 object EngineInteraction {
 
     def processOutput(outputString: String) {
-        def runOnUI(block : () -> Unit){
+        def runOnUI(block : => Unit){
             new Handler(Looper.getMainLooper()).post(block)
         }
 
-        def stringToMove(str: String): Move {
+        def stringToMove(str: String): Move = {
             def fileFromChar(c: Char):Int = c.toInt() - 'a'.toInt()
             def rankFromChar(c: Char):Int = c.toInt() - '1'.toInt()
 
@@ -51,18 +51,18 @@ object EngineInteraction {
         val bestMoveLineRegex = Regex("""^bestmove ([a-h][1-8][a-h][1-8])""")
         val scoreRegex = Regex("""score (cp|mate) (\d+)""")
         if (scoreRegex.containsMatchIn(outputString)) {
-                val scoreMatcher = scoreRegex.find(outputString)
-                val scoreType = scoreMatcher?.groups?.get(1)?.value
-                val scoreValue = scoreMatcher?.groups?.get(2)?.value
-                runOnUI{
-                    when (scoreType){
-                        "cp" -> uciObserver.consumeScore(Integer.parseInt(scoreValue))
-                        "mate" -> uciObserver.consumeScore(MIN_MATE_SCORE)
-                    }
+            val scoreMatcher = scoreRegex.find(outputString)
+            val scoreType = scoreMatcher.groups.get(1).value
+            val scoreValue = scoreMatcher.groups.get(2).value
+            runOnUI{
+                when (scoreType){
+                    "cp" -> uciObserver.consumeScore(Integer.parseInt(scoreValue))
+                    "mate" -> uciObserver.consumeScore(MIN_MATE_SCORE)
                 }
+            }
         }
         else if (bestMoveLineRegex.containsMatchIn(outputString)) {
-                val moveStr = bestMoveLineRegex.find(outputString)?.groups?.get(1)?.value
+                val moveStr = bestMoveLineRegex.find(outputString).groups.get(1).value
                 runOnUI { uciObserver.consumeMove( stringToMove(moveStr) ) }
         }
         else {
@@ -99,14 +99,14 @@ object EngineInteraction {
     private var uciObserver: SimpleUciObserver
     private var processCommunicator: ProcessCommunicator
 
-    private val stockfishName by lazy {
+    private lazy val stockfishName = {
         @SuppressWarnings("DEPRECATION")
-        val suffix = when(Build.CPU_ABI){
-            "armeabi-v7a" -> "arm7"
-            "arm64-v8a" -> "arm8"
-            "x86" -> "x86"
-            "x86_64" -> "x86_64"
-            else -> throw IllegalArgumentException("Unsupported cpu !")
+        val suffix = Build.CPU_ABI match {
+            case "armeabi-v7a" => "arm7"
+            case "arm64-v8a" => "arm8"
+            case "x86" => "x86"
+            case "x86_64" => "x86_64"
+            case _ => throw IllegalArgumentException("Unsupported cpu !")
         }
         s"Stockfish.$suffix"
     }
@@ -119,7 +119,7 @@ object EngineInteraction {
         this.uciObserver = observer
     }
 
-    def initStockfishProcessIfNotDoneYet() : Boolean {
+    def initStockfishProcessIfNotDoneYet() : Boolean = {
         if (copyingThread.isAlive) return false
         val process = new ProcessBuilder(localStockfishPath).start()
         processCommunicator = new ProcessCommunicator(process)
@@ -135,8 +135,6 @@ object EngineInteraction {
             copyingThread.start()
         }
     }
-
-    operator def Regex.contains(text: CharSequence): Boolean = this.matches(text)
 
     private def sendCommandToStockfishProcess(command: String){
         processCommunicator.sendCommand(command)

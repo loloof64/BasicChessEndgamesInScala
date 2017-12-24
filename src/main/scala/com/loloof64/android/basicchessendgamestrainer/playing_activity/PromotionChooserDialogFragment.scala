@@ -15,7 +15,7 @@ object PromotionPieceChooserDialogFragment {
     val TitleKey = "title"
     val WhiteToPlayKey = "whiteToPlay"
 
-    def newInstance(title: String, whiteToPlay: Boolean) : PromotionPieceChooserDialogFragment {
+    def newInstance(title: String, whiteToPlay: Boolean) : PromotionPieceChooserDialogFragment = {
         val dialog = PromotionPieceChooserDialogFragment()
         val args = Bundle()
         args.putString(TitleKey, title)
@@ -43,7 +43,7 @@ class PromotionPieceChooserDialogFragment extends DialogFragment() {
     private var bishopPromotionListener: PromotionButtonOnClickListener
     private var knightPromotionListener: PromotionButtonOnClickListener
 
-    override def onCreateDialog(savedInstanceState: Bundle): Dialog {
+    override def onCreateDialog(savedInstanceState: Bundle): Dialog = {
         val title = arguments.getString(PromotionPieceChooserDialogFragment.TitleKey)
 
         val whiteToPlay = arguments.getBoolean(WhiteToPlayKey)
@@ -94,7 +94,7 @@ class PromotionPieceChooserDialogFragment extends DialogFragment() {
 }
 
 class PromotionButtonOnClickListener(listener: PromotionPieceChooserDialogFragment.Companion.Listener,
-                                     val promotionPiece: Piece) : View.OnClickListener {
+                                     val promotionPiece: Piece) extends View.OnClickListener {
 
     override def onClick(relatedView: View) {
         refListener.get().reactToPromotionPieceSelection(promotionPiece)
