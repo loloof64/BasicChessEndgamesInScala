@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="android.loloof64.com.loloof64.android.basic_chess_endgames_trainer.com.loloof64.android.basic_chess_endgames_trainer.ExerciseChooserActivity">
+    <item
+        android:id="@+id/action_help"
+        android:icon="@android:drawable/ic_menu_help"
+        android:title="@string/action_help"
+        app:showAsAction="ifRoom" />
+</menu>

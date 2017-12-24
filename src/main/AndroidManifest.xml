@@ -1,15 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="com.loloof64.android.basicchessendgamestrainer">
-    <application android:label="@string/app_name"
-                 android:icon="@drawable/scala_android">
-        <activity android:name="MainActivity"
-                  android:theme="@style/Theme.AppCompat"
-                  android:label="@string/app_name">
+    package="com.loloof64.android.basicchessendgamestrainer">
+
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+        <activity
+            android:name=".ExerciseChooserActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".PlayingActivity"
+            android:parentActivityName=".ExerciseChooserActivity"/>
+        <activity android:name=".HelpActivity" />
+        <activity
+            android:name=".PositionGeneratorEditorActivity"
+            android:label="@string/title_activity_position_generator_editor"
+            android:parentActivityName=".ExerciseChooserActivity"
+            android:theme="@style/NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.loloof64.android.basicchessendgamestrainer.ExerciseChooserActivity" />
+        </activity>
     </application>
+
 </manifest>

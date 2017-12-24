@@ -1,4 +1,83 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">BasicChessEndgames</string>
+    <string name="app_name">Basic Chess Endgames</string>
+    <string name="main_menu_select_exercise">Select your exercise</string>
+    <string name="exercise_kq_k">King+Queen/King</string>
+    <string name="exercise_krr_k">King+2Rooks/King</string>
+    <string name="exercise_kbb_k">King+2Bishops/King</string>
+    <string name="illegal_move">Illegal move !</string>
+    <string name="promotion_chooser_title">Choosing the promotion piece</string>
+    <string name="promotion_chooser_knight_button">Knight button</string>
+    <string name="promotion_chooser_bishop_button">Bishop button</string>
+    <string name="promotion_chooser_rook_button">Rook button</string>
+    <string name="promotion_chooser_queen_button">Queen button</string>
+    <string name="checkmate">Checkmate !</string>
+    <string name="stalemate">Stalemate !</string>
+    <string name="fiftyMoveDraw">Draw by the 50 moves rule !</string>
+    <string name="white_play_for_mate">White play for mate</string>
+    <string name="black_play_for_mate">Black play for mate</string>
+    <string name="should_be_draw">It should be draw</string>
+    <string name="exercise_kr_k">King+Rook/King</string>
+    <string name="position_generation_error">Failed to generate position !</string>
+    <string name="restarting_exercise_alert_title">Restart exercise ?</string>
+    <string name="restarting_exercise_alert_message">About to restart exercise : are you sure ?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="new_exercise_alert_title">New exercise</string>
+    <string name="new_exercise_alert_message">About to start a new exercise : are you sure ?</string>
+    <string name="empty_string" />
+    <string name="quit_exercise_confirmation_title">Quit current exercise ?</string>
+    <string name="quit_exercise_confirmation_message">Are you sure you want to quit current exercise ?</string>
+    <string name="back_in_history">Back in history</string>
+    <string name="forward_in_history">Forward in history</string>
+    <string name="help">
+[TAB]Generates basic chess endgames and let you play them again computer (at its best level).[CR][CR][CR]
+
+
+[TAB]First, you have to select a chess endgame kind in the menu screen : when the endgame is in a green line you have to win, and
+        when the endgame is on a orange line you have to draw.[CR]
+        [TAB]Then you will get into the playing screen,
+with a random position based on the endgame you chose. The color you have is also determined randomly.
+You are given your goal : knowing you always start the game.[CR][CR][CR]
+
+
+
+[TAB]You move a piece with the Drag And Drop interaction. There are also lines "around your finger",
+in order to indicate more
+the cell where you are going to leave the piece : which can be very useful if you are on a small device.[CR]
+[TAB]Whenever the game is finished, you have the possibility to review moves (either by touching a move,
+or by using the history arrow buttons).[CR][CR]
+
+[TAB]You also have three buttons, actives whatever the game state, which let you respectively
+reverse the board, restart the last generated position or generate a new position for the same kind
+of endgame.[CR][CR]
+
+
+[TAB]You can find the project files at https://goo.gl/KDKig0.[CR][CR]
+
+
+[TAB]Developed by Laurent Bernabé in 2017. This project use adapted stockfish 8 chess engine(https://goo.gl/ABv2wS),
+        source code of chessLib forked by Laurent Bernabé
+        (https://github.com/loloof64/chesslib),
+        the FreeSerif ttf font (https://fr.fonts2u.com/free-serif.police)
+        and some images from Wikimedia Commons (https://goo.gl/DPdkMw).
+</string>
+    <string name="action_help">Help</string>
+    <string name="position_repetitions_draw">Draw by threefold repetition !</string>
+    <string name="reverse_board">Reverse board</string>
+    <string name="restart_exercise">Restart exercise</string>
+    <string name="new_exercise">New exercise</string>
+    <string name="exercise_kp_k_I">King+Pawn/King (I)</string>
+    <string name="exercise_kp_k_II">King+Pawn/King (II)</string>
+    <string name="missing_material_draw">Draw by missing material !</string>
+    <string name="white_play_for_win">White play for win.</string>
+    <string name="black_play_for_win">Black play for win.</string>
+    <string name="exercise_kppp_kppp">King+3Pawns/King+3Pawns</string>
+    <string name="loading_stockfish">Loading Stockfish engine</string>
+    <string name="exercise_knb_k">King+Knight+Bishop/King</string>
+    <string name="title_activity_position_generator_editor">Position Generator Editor</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="kings_constraints">Kings</string>
+    <string name="other_pieces_count_constraints">Other pieces count</string>
+    <string name="other_pieces_mutual_constraints">Other pieces mutual constraints</string>
 </resources>

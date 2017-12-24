@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="main_menu_select_exercise">Veuillez choisir votre exercice</string>
+    <string name="exercise_kq_k">Roi+Dame/Roi</string>
+    <string name="exercise_krr_k">Roi+2Tours/Roi</string>
+    <string name="exercise_kbb_k">Roi+2Fous/Roi</string>
+    <string name="illegal_move">Coup illégal !</string>
+    <string name="promotion_chooser_title">Choix de la pièce de promotion</string>
+    <string name="promotion_chooser_knight_button">Bouton cavalier</string>
+    <string name="promotion_chooser_bishop_button">Bouton fou</string>
+    <string name="promotion_chooser_rook_button">Bouton tour</string>
+    <string name="promotion_chooser_queen_button">Bouton dame</string>
+    <string name="checkmate">Echec et mat !</string>
+    <string name="stalemate">Pat !</string>
+    <string name="fiftyMoveDraw">Nulle par la règle des 50 coups !</string>
+    <string name="white_play_for_mate">Les Blancs jouent pour le mat</string>
+    <string name="black_play_for_mate">Les Noirs jouent pour le mat</string>
+    <string name="exercise_kr_k">Roi+Tour/Roi</string>
+    <string name="should_be_draw">Cela devrait être nulle !</string>
+    <string name="position_generation_error">Echec de génération de position !</string>
+    <string name="restarting_exercise_alert_title">Recommencer l\'exercice ?</string>
+    <string name="restarting_exercise_alert_message">Sur le point de recommencer l\'exercice : en êtes-vous sûr ?</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="new_exercise_alert_title">Nouvel exercice</string>
+    <string name="new_exercise_alert_message">Sur le point de commencer un nouvel exercice : en êtes-vous sûr ?</string>
+    <string name="empty_string" />
+    <string name="quit_exercise_confirmation_title">Quitter l\'exercice actuel ?</string>
+    <string name="quit_exercise_confirmation_message">Etes-vous sûr de vouloir quitter l\'exercice actuel ?</string>
+    <string name="back_in_history">Reculer dans l\'historique</string>
+    <string name="forward_in_history">Avancer dans l\'historique</string>
+    <string name="app_name">Finales d\'Echecs Basiques</string>
+    <string name="help">
+[TAB]Génère des finales simples du jeu d\'échecs et vous permet de les jouer contre l\'ordinateur
+(à son meilleur niveau).[CR][CR][CR]
+
+
+
+[TAB]D\'abord, vous devez choisir un type de finale dans l\'écran menu : quand la finale est dans une
+        ligne verte l\'objectif est de gagner, et quand la finale considérée est dans une ligne orange
+        l\'objectif est d\'annuler.[CR]
+        [TAB]Ensuite vous arrivez à l\'écran de jeu,
+avec une position aléatoire basée sur le type de finale choisi. La couleur qui vous est attribuée
+est aussi déterminée de manière aléatoire.[CR]
+
+[TAB]Votre objectif est aussi précisé : sachant que vous démarrez toujours la partie.[CR][CR]
+
+
+[TAB]Vous déplacez les pièces à l\'aide de la technique du glisser-déposer. Egalement des lignes
+apparaissent "autour de votre doigt", afin de vous aider à mieux visualiser la case où la pièce
+arrivera : ce qui peut s\'avérer très utile sur les petits périphériques.[CR]
+[TAB]Dès que la partie s\'achève, vous pouvez revoir les coups (soit en touchant un coup, ou à l\'aide
+des boutons fléchés).[CR][CR]
+
+[TAB]Vous disposez également de trois boutons, actifs quel que soit l\'état de la partie, vous permettant
+respectivement de renverser le plateau, redémarrer à partir de la dernière position générée ou
+de générer une nouvelle position pour le même type de fin de partie.[CR][CR][CR]
+
+
+[TAB]Les fichiers du projet sont disponibles à l\'adresse https://goo.gl/KDKig0.[CR][CR]
+
+
+[TAB]Developpée par Laurent Bernabé en 2017. Ce projet utilise une version adaptée moteur d\'échecs stockfish 8(https://goo.gl/ABv2wS),
+        une version forkée par Laurent Bernabé de chessLib (https://github.com/loloof64/chesslib),
+        la fonte FreeSerif ttf (https://fr.fonts2u.com/free-serif.police)
+        et des images provenant du site Wikimedia Commons (https://goo.gl/DPdkMw).
+</string>
+    <string name="action_help">Aide</string>
+    <string name="position_repetitions_draw">Nulle par répétitions !</string>
+    <string name="reverse_board">Retourner l\'échiquier</string>
+    <string name="restart_exercise">Recommencer l\'exercice</string>
+    <string name="new_exercise">Nouvel exercice</string>
+    <string name="exercise_kp_k_I">Roi+Pion/Roi (I)</string>
+    <string name="exercise_kp_k_II">Roi+Pion/Roi (II)</string>
+    <string name="exercise_knb_k">Roi+Cavalier+Fou/Roi</string>
+    <string name="missing_material_draw">Partie nulle par insuffisance matérielle !</string>
+    <string name="white_play_for_win">Les Blancs jouent pour le gain.</string>
+    <string name="black_play_for_win">Les Noirs jouent pour le gain.</string>
+    <string name="exercise_kppp_kppp">Roi+3Pions/Roi+3Pions</string>
+    <string name="loading_stockfish">Chargement du moteur Stockfish</string>
+    <string name="title_activity_position_generator_editor">Editeur pour générateur de position</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="kings_constraints">Rois</string>
+    <string name="other_pieces_count_constraints">Compte autres pièces</string>
+    <string name="other_pieces_mutual_constraints">Contraintes mutuelles pour les autres pièces</string>
+    <string name="section_format">Bonjour de la section: %1$d</string>
+</resources>

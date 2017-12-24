@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.loloof64.android.basicchessendgamestrainer.ExerciseChooserActivity"
+>
+    <TextView
+        android:id="@+id/selectExerciseLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/main_menu_select_exercise"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/exercisesListView"
+        android:layout_below="@id/selectExerciseLabel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="15dp" />
+</RelativeLayout>

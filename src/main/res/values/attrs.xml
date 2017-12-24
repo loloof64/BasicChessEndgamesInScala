@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="min_dimension_percentage" format="integer"/>
+   <declare-styleable name="BoardComponent">
+       <attr name="min_dimension_percentage" />
+   </declare-styleable>
+    <declare-styleable name="PlayableAgainstComputerBoardComponent">
+        <attr name="min_dimension_percentage" />
+    </declare-styleable>
+</resources>
