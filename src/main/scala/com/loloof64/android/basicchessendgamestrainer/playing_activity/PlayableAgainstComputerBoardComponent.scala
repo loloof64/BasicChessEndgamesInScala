@@ -56,7 +56,7 @@ case class PlayableAgainstComputerBoardComponent(context: Context, attrs: Attrib
         if (!_waitingForPlayerGoal && !_gameFinished){
             val isComputerToMove = _playerHasWhite != isWhiteToPlay()
             if (isComputerToMove){
-                new Handler(Looper.getMainLooper()).post(new Runnable {() =>
+                new Handler(Looper.getMainLooper()).post(new Runnable { def run() {
                     addMoveToList(move, moveStringToFAN(_relatedPosition.getFEN(), move))
                     _moveToHighlightFrom = move.getFrom()
                     _moveToHighlightTo = move.getTo()
@@ -64,7 +64,7 @@ case class PlayableAgainstComputerBoardComponent(context: Context, attrs: Attrib
 
                     invalidate()
                     checkIfGameFinished()
-                })
+                }})
             }
         }
     }

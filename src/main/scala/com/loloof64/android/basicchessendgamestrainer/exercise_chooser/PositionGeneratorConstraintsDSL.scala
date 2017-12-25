@@ -159,14 +159,14 @@ class PositionConstraints (
     /**
     Specific constraint for each piece (kind and side).
     */
-    val otherPiecesGlobalConstraint: Map[PieceKind, OtherPieceGlobalConstraint] = Map(),
+    val otherPieceGlobalConstraint: Map[PieceKind, OtherPieceGlobalConstraint] = Map(),
     /**
     General constraint between 2 pieces of the same kind
     */
-    val otherPiecesMutualConstraint: Map[PieceKind, OtherPieceMutualConstraint] = Map(),
+    val otherPieceMutualConstraint: Map[PieceKind, OtherPieceMutualConstraint] = Map(),
 
     /**
     Constraint between 2 pieces of the same kind, but only relying on the apparition order.
     */
-    val otherPiecesIndexedConstraint: Map[PieceKind, OtherPieceIndexedConstraint] = Map()
+    val otherPieceIndexedConstraint: Map[PieceKind, OtherPieceIndexedConstraint] = Map()
 )

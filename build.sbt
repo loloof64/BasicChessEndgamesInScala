@@ -1,7 +1,7 @@
 enablePlugins(AndroidApp)
 android.useSupportVectors
 
-versionCode := Some(1)
+versionCode := Some(6)
 versionName := Some("1.0.8")
 platformTarget := "android-27"
 minSdkVersion in Android :="16"

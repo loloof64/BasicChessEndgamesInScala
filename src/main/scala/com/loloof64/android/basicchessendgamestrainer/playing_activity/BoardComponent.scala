@@ -10,11 +10,6 @@ import com.loloof64.android.basicchessendgamestrainer.R
 import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.BoardUtils.buildSquare
 import com.github.ghik.silencer.silent
 
-object IntUtils {
-    def min(a: Int, b: Int) = if (a < b) a else b
-    def max(a: Int, b: Int) = if (a > b) a else b
-}
-
 case class SquareCoordinates(val file: Int, val rank: Int)
 
 abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAttr: Int) extends View(context, attrs, defStyleAttr) {

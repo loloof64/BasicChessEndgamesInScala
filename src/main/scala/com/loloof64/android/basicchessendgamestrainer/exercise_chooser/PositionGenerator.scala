@@ -68,8 +68,12 @@ class PositionGenerator(private val constraints : PositionConstraints) {
     private var oppositeKingCell = BoardCoordinate(file = 0, rank = 0)
 
     private def placeKings(playerHasWhite: Boolean){
+
+        import ConstraintsTypes._
+
         var loopSuccess = false
-        for (iters <- 0 to maxLoopsIterations){ // setting up player king
+        var iters = 0
+        while (!loopSuccess && iters < maxLoopsIterations){ // setting up player king
 
             val kingCell = generateCell()
             val tempPosition = buildPositionOrNullIfCellAlreadyOccupied(
@@ -77,22 +81,24 @@ class PositionGenerator(private val constraints : PositionConstraints) {
                     pieceToAdd = if (playerHasWhite) Piece.WHITE_KING else Piece.BLACK_KING,
                     pieceCell = buildSquare(rank = kingCell.rank, file = kingCell.file)
             )
-            if (tempPosition == null) continue
+            if (tempPosition != null) {
 
+                if (constraints.playerKing(
+                        BoardLocation(kingCell.file, kingCell.rank),
+                        playerHasWhite)) {
+                    _position.loadFromFEN(tempPosition.getFEN)
+                    playerKingCell = kingCell
+                    loopSuccess = true
+                }
 
-            if (constraints.checkPlayerKingConstraint(
-                    file = kingCell.file, rank = kingCell.rank,
-                    playerHasWhite = playerHasWhite)) {
-                _position.loadFromFEN(tempPosition.getFEN)
-                playerKingCell = kingCell
-                loopSuccess = true
-                break
             }
+            iters += 1
         }
         if (!loopSuccess) throw new PositionGenerationLoopException()
 
         loopSuccess = false
-        for (iters <- 0 to maxLoopsIterations){  // setting up enemy king
+        iters = 0
+        while (!loopSuccess && iters < maxLoopsIterations){  // setting up enemy king
 
             val kingCell = generateCell()
 
@@ -104,45 +110,49 @@ class PositionGenerator(private val constraints : PositionConstraints) {
                     )
             )
 
-            if (tempPosition == null) continue
-            if (enemyKingInChessFor(tempPosition, playerHasWhite)) continue
+            if (tempPosition != null && !enemyKingInChessFor(tempPosition, playerHasWhite)) {
 
-            // validate position if enemy king constraint and kings mutual constraint are respected
-            if (constraints.checkComputerKingConstraint(file = kingCell.file, rank = kingCell.rank, playerHasWhite = playerHasWhite)
-                    && constraints.checkKingsMutualConstraint(
-                    playerKingFile = playerKingCell.file, playerKingRank = playerKingCell.rank,
-                    computerKingFile = kingCell.file, computerKingRank = kingCell.rank,
-                    playerHasWhite = playerHasWhite
-            )) {
-                oppositeKingCell = kingCell
-                _position.loadFromFEN(tempPosition.getFEN)
-                loopSuccess = true
-                break
+                // validate position if enemy king constraint and kings mutual constraint are respected
+                if (constraints.computerKing(BoardLocation(kingCell.file, kingCell.rank), playerHasWhite)
+                        && constraints.kingsMutualConstraint(
+                        BoardLocation(playerKingCell.file, playerKingCell.rank),
+                        BoardLocation(kingCell.file, kingCell.rank),
+                        playerHasWhite
+                )) {
+                    oppositeKingCell = kingCell
+                    _position.loadFromFEN(tempPosition.getFEN)
+                    loopSuccess = true
+                }
+
             }
+
+            iters += 1
         }
         if (!loopSuccess) throw new PositionGenerationLoopException()
     }
 
     private def placeOtherPieces(playerHasWhite: Boolean){
+        import ConstraintsTypes._
+
         def pieceKindToPiece(kind: PieceKind, whitePiece: Boolean): Piece =
         kind.pieceType match {
-            case PieceType.pawn => if (whitePiece) Piece.WHITE_PAWN else Piece.BLACK_PAWN
-            case PieceType.knight => if (whitePiece) Piece.WHITE_KNIGHT else Piece.BLACK_KNIGHT
-            case PieceType.bishop => if (whitePiece) Piece.WHITE_BISHOP else Piece.BLACK_BISHOP
-            case PieceType.rook => if (whitePiece) Piece.WHITE_ROOK else Piece.BLACK_ROOK
-            case PieceType.queen => if (whitePiece) Piece.WHITE_QUEEN else Piece.BLACK_QUEEN
-            case PieceType.king => if (whitePiece) Piece.WHITE_KING else Piece.BLACK_KING
+            case PieceType.Pawn => if (whitePiece) Piece.WHITE_PAWN else Piece.BLACK_PAWN
+            case PieceType.Knight => if (whitePiece) Piece.WHITE_KNIGHT else Piece.BLACK_KNIGHT
+            case PieceType.Bishop => if (whitePiece) Piece.WHITE_BISHOP else Piece.BLACK_BISHOP
+            case PieceType.Rook => if (whitePiece) Piece.WHITE_ROOK else Piece.BLACK_ROOK
+            case PieceType.Queen => if (whitePiece) Piece.WHITE_QUEEN else Piece.BLACK_QUEEN
+            case PieceType.King => if (whitePiece) Piece.WHITE_KING else Piece.BLACK_KING
         }
 
-        constraints.otherPiecesCountsConstraint.forEach { (kind, count) =>
+        constraints.otherPiecesCount.foreach { case PieceKindCount(kind, count) =>
 
-            val savedCoordinates = arrayListOf<BoardCoordinate>()
+            val savedCoordinates = scala.collection.mutable.ArrayBuffer[BoardCoordinate]()
             (0 until count).foreach { index =>
                 var loopSuccess = false
                 for (loopIter <-  0 to maxLoopsIterations) {
-                    val isAPieceOfPlayer = kind.side == Side.player
-                    val isWhitePiece = (isAPieceOfPlayer && playerHasWhite)
-                            || (!isAPieceOfPlayer && !playerHasWhite)
+                    val isAPieceOfPlayer = kind.side == Side.Player
+                    val isWhitePiece = (isAPieceOfPlayer && playerHasWhite) ||
+                     (!isAPieceOfPlayer && !playerHasWhite)
 
                     val pieceCell = generateCell()
                     val tempPosition = buildPositionOrNullIfCellAlreadyOccupied(
@@ -152,30 +162,31 @@ class PositionGenerator(private val constraints : PositionConstraints) {
                                     rank = pieceCell.rank, file = pieceCell.file
                             )
                     )
-                    if (tempPosition == null) continue
-                    if (enemyKingInChessFor(tempPosition, playerHasWhite)) continue
+                    if (tempPosition != null && !enemyKingInChessFor(tempPosition, playerHasWhite)) {
 
-                    // If for any previous piece of same kind, mutual constraint is not respected, will loop another time
-                    if (savedCoordinates.any { !constraints.checkOtherPieceMutualConstraint(
-                            pieceKind = kind, firstPieceFile = it.file, firstPieceRank = it.rank,
-                            secondPieceFile = pieceCell.file, secondPieceRank = pieceCell.rank,
-                            playerHasWhite = playerHasWhite) }) continue
+                        // If for any previous piece of same kind, mutual constraint is not respected, will loop another time
+                        if (!savedCoordinates.exists { current => !constraints.otherPieceMutualConstraint(kind)(
+                                BoardLocation(current.file, current.rank),
+                                BoardLocation(pieceCell.file, pieceCell.rank),
+                                playerHasWhite) }) {
 
-                    if (!constraints.checkOtherPieceIndexedConstraint(pieceKind = kind, apparitionIndex = index,
-                            file = pieceCell.file, rank = pieceCell.rank,
-                            playerHasWhite = playerHasWhite)) continue
+                            if (constraints.otherPieceIndexedConstraint(kind)(index,
+                                    BoardLocation(pieceCell.file, pieceCell.rank),
+                                    playerHasWhite)) {
 
-                    if (constraints.checkOtherPieceGlobalConstraint(
-                            pieceKind = kind,
-                            file = pieceCell.file,
-                            rank = pieceCell.rank,
-                            playerHasWhite = playerHasWhite,
-                            playerKingFile = playerKingCell.file, playerKingRank = playerKingCell.rank,
-                            computerKingFile = oppositeKingCell.file, computerKingRank = playerKingCell.rank)){
-                        _position.loadFromFEN(tempPosition.getFEN)
-                        savedCoordinates += pieceCell
-                        loopSuccess = true
-                        break
+                                if (constraints.otherPieceGlobalConstraint(kind)(
+                                        BoardLocation(pieceCell.file, pieceCell.rank),
+                                        BoardLocation(playerKingCell.file, playerKingCell.rank),
+                                        BoardLocation(oppositeKingCell.file, oppositeKingCell.rank),
+                                        playerHasWhite)){
+                                    _position.loadFromFEN(tempPosition.getFEN)
+                                    savedCoordinates += pieceCell
+                                }
+
+                            }
+
+                        }
+
                     }
                 }
                 if (!loopSuccess) throw new PositionGenerationLoopException()

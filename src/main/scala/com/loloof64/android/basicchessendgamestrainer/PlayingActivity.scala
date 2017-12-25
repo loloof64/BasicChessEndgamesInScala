@@ -79,12 +79,12 @@ class PlayingActivity extends AppCompatActivity() with PromotionPieceChooserDial
         val space = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, spaceDp, getResources().getDisplayMetrics())
         vh.moves_list_view.addItemDecoration(new SpaceLeftAndRightItemDecorator(space.toInt))
 
-        vh.playing_board_history_back.setOnClickListener(new View.OnClickListener{ v => listAdapter.goBackInHistory() })
-        vh.playing_board_history_forward.setOnClickListener(new View.OnClickListener{ v => listAdapter.goForwardInHistory() })
+        vh.playing_board_history_back.setOnClickListener(new View.OnClickListener{ def onClick(view: View){ listAdapter.goBackInHistory() }})
+        vh.playing_board_history_forward.setOnClickListener(new View.OnClickListener{ def onClick(view: View){ listAdapter.goForwardInHistory() }})
 
-        vh.fab_restart_exercise.setOnClickListener (new View.OnClickListener{ v => restartLastExercise() })
-        vh.fab_reverse_board.setOnClickListener (new View.OnClickListener{ v => reverseBoard() })
-        vh.fab_new_exercise.setOnClickListener (new View.OnClickListener{ v => newExercise() })
+        vh.fab_restart_exercise.setOnClickListener (new View.OnClickListener{ def onClick(view: View){ restartLastExercise() }})
+        vh.fab_reverse_board.setOnClickListener (new View.OnClickListener{ def onClick(view: View){ reverseBoard() }})
+        vh.fab_new_exercise.setOnClickListener (new View.OnClickListener{ def onClick(view: View){ newExercise() }})
 
         EngineInteraction.initStockfishProcessIfNotDoneYet()
 
@@ -211,10 +211,10 @@ class PlayingActivity extends AppCompatActivity() with PromotionPieceChooserDial
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(R.string.restarting_exercise_alert_title)
                 .setMessage(R.string.restarting_exercise_alert_message)
-                .setPositiveButton(R.string.yes, ( new DialogInterface.OnClickListener { _ =>
+                .setPositiveButton(R.string.yes, ( new DialogInterface.OnClickListener { def onClick(i: DialogInterface, which: Int) {
                     val exercise = lastExercise
                     if (exercise != null) newGame(exercise)
-                }))
+                }}))
                 .setNegativeButton(R.string.no, null)
                 .show()
     }
@@ -224,19 +224,19 @@ class PlayingActivity extends AppCompatActivity() with PromotionPieceChooserDial
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(R.string.new_exercise_alert_title)
                 .setMessage(R.string.new_exercise_alert_message)
-                .setPositiveButton(R.string.yes, ( new DialogInterface.OnClickListener { _ =>
+                .setPositiveButton(R.string.yes, ( new DialogInterface.OnClickListener { def onClick(i: DialogInterface, which: Int) {
                     val generatedPosition = new PositionGenerator(availableGenerators(generatorIndex).constraints).generatePosition(random.nextBoolean())
                     newGame(generatedPosition)
-                }))
+                }}))
                 .setNegativeButton(R.string.no, null)
                 .show()
     }
 
     def addPositionInMovesList(san: String, fen: String, moveToHighlight: MoveToHighlight) {
         listAdapter.addPosition(san, fen, moveToHighlight)
-        vh.moves_list_view.post (new Runnable {() =>
+        vh.moves_list_view.post (new Runnable { def run() {
             vh.moves_list_view.smoothScrollToPosition(listAdapter.getItemCount())
-        })
+        }})
     }
 
     def setPlayerGoalTextId(textID: Int, alertMode: Boolean){
@@ -265,9 +265,9 @@ class PlayingActivity extends AppCompatActivity() with PromotionPieceChooserDial
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(R.string.quit_exercise_confirmation_title)
                 .setMessage(R.string.quit_exercise_confirmation_message)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener { _ =>
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener { def onClick(i: DialogInterface, which: Int) {
                     superOnBackPressed()
-                })
+                }})
                 .setNegativeButton(R.string.no, null)
                 .show()
     }

@@ -20,5 +20,5 @@ object MyApplication {
         appContext = ctx
     }
 
-    var appContext: Context
+    var appContext: Context = null
 }

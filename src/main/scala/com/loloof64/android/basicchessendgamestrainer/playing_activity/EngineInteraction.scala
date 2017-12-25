@@ -36,7 +36,7 @@ object EngineInteraction {
 
     def processOutput(outputString: String) {
         def runOnUI(block : () => Unit){
-            new Handler(Looper.getMainLooper()).post(new Runnable{ () => block()})
+            new Handler(Looper.getMainLooper()).post(new Runnable{ def run() { block()} })
         }
 
         def stringToMove(str: String): Move = {

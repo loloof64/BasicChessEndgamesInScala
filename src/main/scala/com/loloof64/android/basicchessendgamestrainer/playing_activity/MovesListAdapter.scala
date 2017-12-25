@@ -49,11 +49,11 @@ class MovesListAdapter(private val weakRefContext: WeakReference[Context], priva
                 else R.color.moves_history_cell_standard_color
         ))
         if (position%3 > 0) {
-            holder.textView.setOnClickListener(new View.OnClickListener { _ =>
+            holder.textView.setOnClickListener(new View.OnClickListener { def onClick(v:View) {
                 _selectedNavigationItem = currentPosition
                 updateHostView()
                 update()
-            })
+            }})
         }
     }
 
@@ -121,7 +121,7 @@ class MovesListAdapter(private val weakRefContext: WeakReference[Context], priva
         update()
     }
 
-    def selectedNavigationItem: Int = selectedNavigationItem
+    def selectedNavigationItem: Int = _selectedNavigationItem
     def selectedNavigationItem_=(value: Int){
         if (_switchingPositionFeatureActive){
             _selectedNavigationItem = value

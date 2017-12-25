@@ -7,17 +7,6 @@ object Exercises {
     import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.ConstraintsConstants._
     import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.ConstraintsTypes._
 
-    val availableGenerators = Array(
-        ExerciseInfo(mustWin = true, textId = R.string.exercise_krr_k, constraints = KRRvK),
-        ExerciseInfo(mustWin = true, textId = R.string.exercise_kq_k, constraints = KQvK),
-        ExerciseInfo(mustWin = true, textId = R.string.exercise_kr_k, constraints =  KRvK),
-        ExerciseInfo(mustWin = true, textId = R.string.exercise_kbb_k, constraints = KBBvK),
-        ExerciseInfo(mustWin = true, textId = R.string.exercise_kp_k_I, constraints =  KPvK_I),
-        ExerciseInfo(mustWin = false, textId = R.string.exercise_kp_k_II, constraints = KPvK_II),
-        ExerciseInfo(mustWin = true, textId = R. string.exercise_kppp_kppp, constraints = KPPPvKPPP),
-        ExerciseInfo(mustWin = true, textId = R.string.exercise_knb_k, constraints = KNBvK)
-    )
-
     private val KRRvK = new PositionConstraints(
         computerKing = {(location, playerHasWhite) =>
             (FileC to FileF).contains(location.file) && 
@@ -61,7 +50,7 @@ object Exercises {
             Bishop belongingTo Player inCount 2
         ),
 
-        otherPiecesMutualConstraint = Map(
+        otherPieceMutualConstraint = Map(
             (Bishop belongingTo Player) -> {(firstPieceLocation, secondPieceLocation, playerHasWhite) =>
                 val firstSquareIsBlack = (firstPieceLocation.file + firstPieceLocation.rank) % 2 > 0
                 val secondSquareIsBlack = (secondPieceLocation.file + secondPieceLocation.rank) % 2 > 0
@@ -88,7 +77,7 @@ object Exercises {
             Pawn belongingTo Player inCount 1
         ),
 
-        otherPiecesGlobalConstraint = Map (
+        otherPieceGlobalConstraint = Map (
             (Pawn belongingTo Player) -> {(pieceLocation, playerKingLocation, computerKingLocation, playerHasWhite) =>
                 (pieceLocation.rank == (if (playerHasWhite) Rank5 else Rank4)) &&
                 (pieceLocation.file == playerKingLocation.file)
@@ -113,7 +102,7 @@ object Exercises {
             Pawn belongingTo Computer inCount 1
         ),
 
-        otherPiecesGlobalConstraint = Map(
+        otherPieceGlobalConstraint = Map(
             (Pawn belongingTo Computer) -> {(pieceLocation, playerKingLocation, computerKingLocation, playerHasWhite) =>
                 (if (playerHasWhite) (Rank3 to Rank5) else (Rank4 to Rank6)).contains(pieceLocation.rank) &&
                 (pieceLocation.file == playerKingLocation.file)
@@ -135,7 +124,7 @@ object Exercises {
             Pawn belongingTo Computer inCount 3
         ),
 
-        otherPiecesGlobalConstraint = Map (
+        otherPieceGlobalConstraint = Map (
             (Pawn belongingTo Player) -> {(pieceLocation, playerKingLocation, computerKingLocation, playerHasWhite) =>
                 pieceLocation.rank == (if (playerHasWhite) Rank5 else Rank4)
             },
@@ -144,7 +133,7 @@ object Exercises {
             }
         ),
 
-        otherPiecesIndexedConstraint = Map (
+        otherPieceIndexedConstraint = Map (
             (Pawn belongingTo Player) -> {(apparitionIndex, pieceLocation, playerHasWhite) =>
                 pieceLocation.file == apparitionIndex
             },
@@ -164,6 +153,17 @@ object Exercises {
             Knight belongingTo Player inCount 1,
             Bishop belongingTo Player inCount 1
         )
+    )
+
+    val availableGenerators = Array(
+        ExerciseInfo(mustWin = true, textId = R.string.exercise_krr_k, constraints = KRRvK),
+        ExerciseInfo(mustWin = true, textId = R.string.exercise_kq_k, constraints = KQvK),
+        ExerciseInfo(mustWin = true, textId = R.string.exercise_kr_k, constraints =  KRvK),
+        ExerciseInfo(mustWin = true, textId = R.string.exercise_kbb_k, constraints = KBBvK),
+        ExerciseInfo(mustWin = true, textId = R.string.exercise_kp_k_I, constraints =  KPvK_I),
+        ExerciseInfo(mustWin = false, textId = R.string.exercise_kp_k_II, constraints = KPvK_II),
+        ExerciseInfo(mustWin = true, textId = R. string.exercise_kppp_kppp, constraints = KPPPvKPPP),
+        ExerciseInfo(mustWin = true, textId = R.string.exercise_knb_k, constraints = KNBvK)
     )
 }
 

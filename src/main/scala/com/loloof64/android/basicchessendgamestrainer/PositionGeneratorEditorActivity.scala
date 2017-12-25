@@ -39,9 +39,11 @@ class PositionGeneratorEditorActivity extends AppCompatActivity() {
         vh.container.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(vh.tabs))
         vh.tabs.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(vh.container))
 
-        vh.fab.setOnClickListener(new View.OnClickListener { view =>
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+        vh.fab.setOnClickListener(new View.OnClickListener { 
+            override def onClick(view: View) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show()
+            }
         })
 
     }
@@ -94,7 +96,7 @@ class PositionGeneratorEditorActivity extends AppCompatActivity() {
                                   savedInstanceState: Bundle): View = {
             val rootView = inflater.inflate(R.layout.fragment_position_generator_editor, container, false)
             val section_label = rootView.findViewById(R.id.section_label).asInstanceOf[TextView]
-            section_label.setText(getString(R.string.section_format, getArguments().getInt(PlaceholderFragment.ARG_SECTION_NUMBER)))
+            section_label.setText(getString(R.string.section_format, getArguments().getInt(PlaceholderFragment.ARG_SECTION_NUMBER).asInstanceOf[AnyRef]))
             return rootView
         }
 

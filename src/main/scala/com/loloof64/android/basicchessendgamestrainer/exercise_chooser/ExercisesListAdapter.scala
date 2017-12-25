@@ -2,8 +2,7 @@ package com.loloof64.android.basicchessendgamestrainer.exercise_chooser
 
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.ViewGroup
+import android.view.{LayoutInflater, ViewGroup, View}
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.loloof64.android.basicchessendgamestrainer.MyApplication
@@ -36,7 +35,7 @@ class ExercisesListAdapter(private val exercisesList: Array[ExerciseInfo],
         }
 
         holder.textView.setText( MyApplication.getApplicationContext().getString(exercisesList(position).textId))
-        holder.textView.setOnClickListener{ itemClickListener.onClick(position) }
+        holder.textView.setOnClickListener( new View.OnClickListener{ def onClick(v: View){ itemClickListener.onClick(position) }})
         holder.textView.setBackgroundColor(
                 if (exercisesList(position).mustWin) getColor(R.color.exercise_chooser_winning_color)
                 else getColor(R.color.exercise_chooser_nullifying_color)
