@@ -1,25 +1,21 @@
 package com.loloof64.android.basicchessendgamestrainer
 
-import android.content.Context
-import android.content.Intent
+import android.content.{Context, Intent, DialogInterface}
 import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
+import android.support.v7.app.{AlertDialog, AppCompatActivity}
+import android.support.v7.widget.{GridLayoutManager, RecyclerView}
 import android.util.TypedValue
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.{Menu, MenuItem, View}
 import android.widget.Toast
 import com.github.bhlangonijr.chesslib.Piece
 import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.PositionGenerator
-import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.availableGenerators
+import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.Exercises.availableGenerators
 import com.loloof64.android.basicchessendgamestrainer.playing_activity._
 import java.lang.ref.WeakReference
 import java.util._
+import com.github.ghik.silencer.silent
 
 class SpaceLeftAndRightItemDecorator(private val space: Int) extends RecyclerView.ItemDecoration(){
     override def getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
@@ -57,10 +53,12 @@ object PlayingActivity {
 
 class PlayingActivity extends AppCompatActivity() with PromotionPieceChooserDialogFragment.Listener {
 
+    import PlayingActivity._
+
     implicit val context = this
     lazy val vh: TypedViewHolder.activity_playing = TypedViewHolder.setContentView(this, TR.layout.activity_playing)
 
-    @SuppressWarning("DEPRECATION")
+    @silent
     private def findColor(colorResId: Int): Int = getResources().getColor(colorResId)
 
     override def reactToPromotionPieceSelection(piece: Piece) {
@@ -73,30 +71,30 @@ class PlayingActivity extends AppCompatActivity() with PromotionPieceChooserDial
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_playing)
 
-        val gridLayoutColumns = if (getResources().configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 6 else 6
-        val gridLayoutManager = GridLayoutManager(this, gridLayoutColumns)
-        moves_list_view.layoutManager = gridLayoutManager
-        moves_list_view.adapter = listAdapter
+        val gridLayoutColumns = if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) 6 else 6
+        val gridLayoutManager = new GridLayoutManager(this, gridLayoutColumns)
+        vh.moves_list_view.setLayoutManager(gridLayoutManager)
+        vh.moves_list_view.setAdapter(listAdapter)
         val spaceDp = 5.0f
-        val space = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, spaceDp, getResources().displayMetrics)
-        moves_list_view.addItemDecoration(SpaceLeftAndRightItemDecorator(space.toInt()))
+        val space = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, spaceDp, getResources().getDisplayMetrics())
+        vh.moves_list_view.addItemDecoration(new SpaceLeftAndRightItemDecorator(space.toInt))
 
-        vh.playing_board_history_back.setOnClickListener { vh.listAdapter.goBackInHistory() }
-        vh.playing_board_history_forward.setOnClickListener { vh.listAdapter.goForwardInHistory() }
+        vh.playing_board_history_back.setOnClickListener(new View.OnClickListener{ v => listAdapter.goBackInHistory() })
+        vh.playing_board_history_forward.setOnClickListener(new View.OnClickListener{ v => listAdapter.goForwardInHistory() })
 
-        fab_restart_exercise.setOnClickListener { restartLastExercise() }
-        fab_reverse_board.setOnClickListener { reverseBoard() }
-        fab_new_exercise.setOnClickListener { newExercise() }
+        vh.fab_restart_exercise.setOnClickListener (new View.OnClickListener{ v => restartLastExercise() })
+        vh.fab_reverse_board.setOnClickListener (new View.OnClickListener{ v => reverseBoard() })
+        vh.fab_new_exercise.setOnClickListener (new View.OnClickListener{ v => newExercise() })
 
         EngineInteraction.initStockfishProcessIfNotDoneYet()
 
-        generatorIndex = intent.extras.getInt(generatorIndexKey)
-        val generatedPosition = PositionGenerator(availableGenerators[generatorIndex].constraints).generatePosition(random.nextBoolean())
-        if (generatedPosition.isNotEmpty()) {
-            newGame(generatedPosition)
+        generatorIndex = getIntent().getExtras().getInt(generatorIndexKey)
+        val generatedPosition = new PositionGenerator(availableGenerators(generatorIndex).constraints).generatePosition(random.nextBoolean())
+        if (generatedPosition.isEmpty) {
+            Toast.makeText(this, R.string.position_generation_error, Toast.LENGTH_LONG).show()
         }
         else {
-            Toast.makeText(this, R.string.position_generation_error, Toast.LENGTH_LONG).show()
+            newGame(generatedPosition)            
         }
     }
 
@@ -109,23 +107,23 @@ class PlayingActivity extends AppCompatActivity() with PromotionPieceChooserDial
         outState.putInt(playerGoalIDKey, playerGoalTextId)
         outState.putBoolean(playerGoalInAlertModeKey, playerGoalInAlertMode)
         outState.putBoolean(waitingForPlayerGoalKey, vh.playingBoard.isWaitingForPlayerGoal())
-        outState.putStringArray(adapterSanItemsKey, vh.listAdapter.items.map { it.san }.toTypedArray())
-        outState.putStringArray(adapterFenItemsKey, vh.listAdapter.items.map { it.relatedFen }.toTypedArray())
+        outState.putStringArray(adapterSanItemsKey, listAdapter.items.map { _.san }.toArray)
+        outState.putStringArray(adapterFenItemsKey, listAdapter.items.map { _.relatedFen }.toArray)
         outState.putBoolean(startedToWriteMovesKey, vh.playingBoard.hasStartedToWriteMoves())
         outState.putInt(moveToHighlightFromFileKey, vh.playingBoard.getMoveToHighlightFromFile())
         outState.putInt(moveToHighlightFromRankKey, vh.playingBoard.getMoveToHighlightFromRank())
         outState.putInt(moveToHighlightToFileKey, vh.playingBoard.getMoveToHighlightToFile())
         outState.putInt(moveToHighlightToRankKey, vh.playingBoard.getMoveToHighlightToRank())
-        outState.putBoolean(switchingPositionAllowedKey, vh.listAdapter.switchingPosition)
+        outState.putBoolean(switchingPositionAllowedKey, listAdapter.switchingPosition)
         outState.putIntArray(registedHighlitedMovesStartFilesKey,
-                vh.listAdapter.items.map { it.moveToHighlight.startFile }.toIntArray())
+                listAdapter.items.map { _.moveToHighlight.startFile }.toArray)
         outState.putIntArray(registedHighlitedMovesStartRanksKey,
-                vh.listAdapter.items.map { it.moveToHighlight.startRank }.toIntArray())
+                listAdapter.items.map { _.moveToHighlight.startRank }.toArray)
         outState.putIntArray(registedHighlitedMovesEndFilesKey,
-                vh.listAdapter.items.map { it.moveToHighlight.endFile }.toIntArray())
+                listAdapter.items.map { _.moveToHighlight.endFile }.toArray)
         outState.putIntArray(registedHighlitedMovesEndRanksKey,
-                vh.listAdapter.items.map { it.moveToHighlight.endRank }.toIntArray())
-        outState.putInt(selectedNavigationItemKey, vh.listAdapter.selectedNavigationItem)
+                listAdapter.items.map { _.moveToHighlight.endRank }.toArray)
+        outState.putInt(selectedNavigationItemKey, listAdapter.selectedNavigationItem)
         outState.putBoolean(blacksAreDownKey, vh.playingBoard.areBlackDown())
     }
 
@@ -155,15 +153,15 @@ class PlayingActivity extends AppCompatActivity() with PromotionPieceChooserDial
 
             val highlightStart = highlightStartFiles zip highlightStartRanks
             val highlightEnd = highlightEndFiles zip highlightEndRanks
-            val highlights = (highlightStart zip highlightEnd).map { (start, end) => MoveToHighlight(
-                    start.first, start.second, end.first, end.second) }
+            val highlights = (highlightStart zip highlightEnd).map { case (start, end) => MoveToHighlight(
+                    start._1, start._2, end._1, end._2) }
             val adapterItems = (sanItems zip fenItems) zip highlights
 
-            vh.listAdapter.items = adapterItems.map { (a, b) =>
-                RowInput(a.first, a.second, b)
-            }.toTypedArray()
-            vh.listAdapter.switchingPosition = savedInstanceState.getBoolean(switchingPositionAllowedKey)
-            vh.listAdapter.selectedNavigationItem = savedInstanceState.getInt(selectedNavigationItemKey)
+            listAdapter.items = adapterItems.map { case (a, b) =>
+                RowInput(a._1, a._2, b)
+            }.toArray
+            listAdapter.switchingPosition = savedInstanceState.getBoolean(switchingPositionAllowedKey)
+            listAdapter.selectedNavigationItem = savedInstanceState.getInt(selectedNavigationItemKey)
         }
     }
 
@@ -186,7 +184,7 @@ class PlayingActivity extends AppCompatActivity() with PromotionPieceChooserDial
     def askForPromotionPiece() {
         val title = getString(R.string.promotion_chooser_title)
         val dialog = PromotionPieceChooserDialogFragment.newInstance(title, vh.playingBoard.isWhiteToPlay())
-        dialog.show(supportFragmentManager, "promotionPieceChooser")
+        dialog.show(getSupportFragmentManager(), "promotionPieceChooser")
     }
 
     def reactForIllegalMove() {
@@ -203,71 +201,72 @@ class PlayingActivity extends AppCompatActivity() with PromotionPieceChooserDial
     private def newGame(fen: String = standardFEN){
         disallowPositionNavigation()
         setPlayerGoalTextId(R.string.empty_string, alertMode = false)
-        vh.listAdapter.clear()
+        listAdapter.clear()
         lastExercise = fen
         vh.playingBoard.new_game(fen)
     }
 
     private def restartLastExercise(){
-        AlertDialog.Builder(this)
+        new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(R.string.restarting_exercise_alert_title)
                 .setMessage(R.string.restarting_exercise_alert_message)
-                .setPositiveButton(R.string.yes, {(_, _) =>
+                .setPositiveButton(R.string.yes, ( new DialogInterface.OnClickListener { _ =>
                     val exercise = lastExercise
                     if (exercise != null) newGame(exercise)
-                })
+                }))
                 .setNegativeButton(R.string.no, null)
                 .show()
     }
 
     private def newExercise(){
-        AlertDialog.Builder(this)
+        new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(R.string.new_exercise_alert_title)
                 .setMessage(R.string.new_exercise_alert_message)
-                .setPositiveButton(R.string.yes, {(_, _) =>
-                    val generatedPosition = PositionGenerator(availableGenerators[generatorIndex].constraints).generatePosition(random.nextBoolean())
+                .setPositiveButton(R.string.yes, ( new DialogInterface.OnClickListener { _ =>
+                    val generatedPosition = new PositionGenerator(availableGenerators(generatorIndex).constraints).generatePosition(random.nextBoolean())
                     newGame(generatedPosition)
-                })
+                }))
                 .setNegativeButton(R.string.no, null)
                 .show()
     }
 
     def addPositionInMovesList(san: String, fen: String, moveToHighlight: MoveToHighlight) {
-        vh.listAdapter.addPosition(san, fen, moveToHighlight)
-        moves_list_view.post {
-            moves_list_view.smoothScrollToPosition(vh.listAdapter.itemCount)
-        }
+        listAdapter.addPosition(san, fen, moveToHighlight)
+        vh.moves_list_view.post (new Runnable {() =>
+            vh.moves_list_view.smoothScrollToPosition(listAdapter.getItemCount())
+        })
     }
 
     def setPlayerGoalTextId(textID: Int, alertMode: Boolean){
         playerGoalTextId = textID
         playerGoalInAlertMode = alertMode
         vh.label_player_goal.setText(getResources().getString(textID))
-        if (alertMode) label_player_goal.setTextColor(findColor(R.color.player_goal_label_alert_color))
-        else label_player_goal.setTextColor(findColor(R.color.player_goal_label_standard_color))
+        if (alertMode) vh.label_player_goal.setTextColor(findColor(R.color.player_goal_label_alert_color))
+        else vh.label_player_goal.setTextColor(findColor(R.color.player_goal_label_standard_color))
     }
 
     def activatePositionNavigation(){
-        vh.listAdapter.switchingPosition = true
-        vh.playing_board_history_back.visibility = View.VISIBLE
-        vh.playing_board_history_forward.visibility = View.VISIBLE
+        listAdapter.switchingPosition = true
+        vh.playing_board_history_back.setVisibility(View.VISIBLE)
+        vh.playing_board_history_forward.setVisibility(View.VISIBLE)
     }
 
     def disallowPositionNavigation(){
-        vh.listAdapter.switchingPosition = false
-        vh.playing_board_history_back.visibility = View.INVISIBLE
-        vh.playing_board_history_forward.visibility = View.INVISIBLE
+        listAdapter.switchingPosition = false
+        vh.playing_board_history_back.setVisibility(View.INVISIBLE)
+        vh.playing_board_history_forward.setVisibility(View.INVISIBLE)
     }
 
     override def onBackPressed() {
-        AlertDialog.Builder(this)
+        val superOnBackPressed = () => super.onBackPressed()
+        new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(R.string.quit_exercise_confirmation_title)
                 .setMessage(R.string.quit_exercise_confirmation_message)
-                .setPositiveButton(R.string.yes, {(_, _) =>
-                    super.onBackPressed()
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener { _ =>
+                    superOnBackPressed()
                 })
                 .setNegativeButton(R.string.no, null)
                 .show()
@@ -295,12 +294,12 @@ class PlayingActivity extends AppCompatActivity() with PromotionPieceChooserDial
                 weakRefContext.get() match {
                     case p:PlayingActivity => {
                         p.vh.playingBoard.setFromFen(positionFen)
-                        if (p.getMoveToHighlight() != null) {
+                        if (moveToHighlight != null) {
                             p.vh.playingBoard.setHighlightedMove(moveToHighlight.startFile,
                                     moveToHighlight.startRank,
                                     moveToHighlight.endFile,
                                     moveToHighlight.endRank)
-                            p.moves_list_view.smoothScrollToPosition(position)
+                            p.vh.moves_list_view.smoothScrollToPosition(position)
                         }
                         else {
                             p.vh.playingBoard.clearHighlightedMove()

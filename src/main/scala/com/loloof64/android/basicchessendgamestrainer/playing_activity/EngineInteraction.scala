@@ -5,6 +5,7 @@ import com.github.bhlangonijr.chesslib.move.Move
 import com.loloof64.android.basicchessendgamestrainer.MyApplication
 import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.BoardUtils.buildSquare
 import java.io._
+import com.github.ghik.silencer.silent
 
 class ProcessCommunicator(process: Process) extends Runnable {
 
@@ -27,20 +28,20 @@ class ProcessCommunicator(process: Process) extends Runnable {
     }
 
     private var mustStop = false
-    private val processWriter = new PrintWriter(process.outputStream)
-    private val processInput = new BufferedReader(InputStreamReader(process.inputStream))
+    private val processWriter = new PrintWriter(process.getOutputStream())
+    private val processInput = new BufferedReader(new InputStreamReader(process.getInputStream()))
 }
 
 object EngineInteraction {
 
     def processOutput(outputString: String) {
-        def runOnUI(block : => Unit){
-            new Handler(Looper.getMainLooper()).post(block)
+        def runOnUI(block : () => Unit){
+            new Handler(Looper.getMainLooper()).post(new Runnable{ () => block()})
         }
 
         def stringToMove(str: String): Move = {
-            def fileFromChar(c: Char):Int = c.toInt() - 'a'.toInt()
-            def rankFromChar(c: Char):Int = c.toInt() - '1'.toInt()
+            def fileFromChar(c: Char):Int = c.toInt - 'a'.toInt
+            def rankFromChar(c: Char):Int = c.toInt - '1'.toInt
 
             return new Move(
                 buildSquare( rankFromChar(str(1)), fileFromChar(str(0)) ),
@@ -48,22 +49,24 @@ object EngineInteraction {
             )
         }
 
-        val bestMoveLineRegex = Regex("""^bestmove ([a-h][1-8][a-h][1-8])""")
-        val scoreRegex = Regex("""score (cp|mate) (\d+)""")
-        if (scoreRegex.containsMatchIn(outputString)) {
-            val scoreMatcher = scoreRegex.find(outputString)
-            val scoreType = scoreMatcher.groups.get(1).value
-            val scoreValue = scoreMatcher.groups.get(2).value
+        val bestMoveLineRegex = """^bestmove ([a-h][1-8][a-h][1-8])""".r
+        val scoreRegex = """score (cp|mate) (\d+)""".r
+
+        val scoreMatch = scoreRegex.findFirstMatchIn(outputString)
+        val bestMoveLineMatch = bestMoveLineRegex.findFirstMatchIn(outputString)
+
+        if (scoreMatch.isDefined) {
+            val scoreRegex(scoreType, scoreValue) = outputString
             runOnUI{
-                when (scoreType){
-                    "cp" -> uciObserver.consumeScore(Integer.parseInt(scoreValue))
-                    "mate" -> uciObserver.consumeScore(MIN_MATE_SCORE)
+                scoreType match {
+                    case "cp" => () => uciObserver.consumeScore(Integer.parseInt(scoreValue))
+                    case "mate" => () => uciObserver.consumeScore(PlayableAgainstComputerBoardComponent.MIN_MATE_SCORE)
                 }
             }
         }
-        else if (bestMoveLineRegex.containsMatchIn(outputString)) {
-                val moveStr = bestMoveLineRegex.find(outputString).groups.get(1).value
-                runOnUI { uciObserver.consumeMove( stringToMove(moveStr) ) }
+        else if (bestMoveLineMatch.isDefined) {
+                val bestMoveLineRegex(moveStr) = outputString
+                runOnUI { () => uciObserver.consumeMove( stringToMove(moveStr) ) }
         }
         else {
             println(s"Unrecognized uci output '$outputString'")
@@ -79,15 +82,18 @@ object EngineInteraction {
         sendCommandToStockfishProcess("go")
     }
 
-    private val copyingThread = Thread {
-        val inStream = MyApplication.appContext.assets.open(stockfishName)
-        val outStream = FileOutputStream(localStockfishPath)
-        val buffer = ByteArray(4096)
-        var read: Int
-        while (true) {
+    def setUciObserver(observer: SimpleUciObserver){
+        this.uciObserver = observer
+    }
+
+    private val copyingThread = new Thread {
+        val inStream = MyApplication.appContext.getAssets().open(stockfishName)
+        val outStream = new FileOutputStream(localStockfishPath)
+        val buffer = new Array[Byte](4096)
+        var read: Int = 0
+        while (read >= 0) {
             read = inStream.read(buffer)
-            if (read <= 0) break
-            outStream.write(buffer, 0, read)
+            if (read >= 0) outStream.write(buffer, 0, read)
         }
         outStream.close()
         inStream.close()
@@ -96,27 +102,23 @@ object EngineInteraction {
         Runtime.getRuntime().exec("/system/bin/chmod 744 $localStockfishPath")
     }
 
-    private var uciObserver: SimpleUciObserver
-    private var processCommunicator: ProcessCommunicator
+    private var uciObserver: SimpleUciObserver = null
+    private var processCommunicator: ProcessCommunicator = null
 
     private lazy val stockfishName = {
-        @SuppressWarning("DEPRECATION")
+        @silent
         val suffix = Build.CPU_ABI match {
             case "armeabi-v7a" => "arm7"
             case "arm64-v8a" => "arm8"
             case "x86" => "x86"
             case "x86_64" => "x86_64"
-            case _ => throw IllegalArgumentException("Unsupported cpu !")
+            case _ => throw new IllegalArgumentException("Unsupported cpu !")
         }
         s"Stockfish.$suffix"
     }
 
     private lazy val localStockfishPath = {
-        s"${MyApplication.appContext.filesDir.path}/stockfish"
-    }
-
-    def setUciObserver(observer: SimpleUciObserver){
-        this.uciObserver = observer
+        s"${MyApplication.appContext.getFilesDir().getPath()}/stockfish"
     }
 
     def initStockfishProcessIfNotDoneYet() : Boolean = {
@@ -124,14 +126,14 @@ object EngineInteraction {
         val process = new ProcessBuilder(localStockfishPath).start()
         processCommunicator = new ProcessCommunicator(process)
         val t = new Thread(processCommunicator)
-        t.isDaemon = true
+        t.setDaemon(true)
         t.start()
 
         return true
     }
 
     def copyStockfishIntoInternalMemoryIfNecessary(){
-        if (!File(localStockfishPath).exists()) {
+        if (!(new File(localStockfishPath).exists())) {
             copyingThread.start()
         }
     }

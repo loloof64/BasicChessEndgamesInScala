@@ -8,6 +8,7 @@ import android.view.View
 import com.github.bhlangonijr.chesslib.{Board, Piece, Side}
 import com.loloof64.android.basicchessendgamestrainer.R
 import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.BoardUtils.buildSquare
+import com.github.ghik.silencer.silent
 
 object IntUtils {
     def min(a: Int, b: Int) = if (a < b) a else b
@@ -18,8 +19,8 @@ case class SquareCoordinates(val file: Int, val rank: Int)
 
 abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAttr: Int) extends View(context, attrs, defStyleAttr) {
 
-    @SuppressWarning("DEPRECATION")
-    def getColor(colorResId: Int): Int = resources.getColor(colorResId)
+    @silent
+    def getColor(colorResId: Int): Int = getResources().getColor(colorResId)
 
     def this(context: Context, attrs: AttributeSet) { this(context, attrs, 0) }
     def this(context: Context) { this(context, null, 0) }
@@ -31,15 +32,15 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
 
     def computeMinAvailableSpacePercentage():Int = minAvailableSpacePercentage
 
-    protected abstract def relatedPosition() : Board
-    protected abstract def replacePositionWith(positionFEN : String)
+    protected def relatedPosition() : Board
+    protected def replacePositionWith(positionFEN : String)
 
     protected var reversed = false
     private val rectPaint = new Paint()
     private val fontPaint = new Paint()
 
-    abstract def highlightedStartCell() : SquareCoordinates
-    abstract def highlightedTargetCell() : SquareCoordinates
+    def highlightedStartCell() : SquareCoordinates
+    def highlightedTargetCell() : SquareCoordinates
 
     def reverse() {
         reversed = !reversed
@@ -53,13 +54,13 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
     }
 
     override def onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int){
-        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
-        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
+        val widthSize = View.MeasureSpec.getSize(widthMeasureSpec)
+        val heightSize = View.MeasureSpec.getSize(heightMeasureSpec)
 
         val minSpacePercentage = computeMinAvailableSpacePercentage()
 
-        val widthAdjusted = (widthSize * minSpacePercentage / 100).max(suggestedMinimumWidth)
-        val heightAdjusted = (heightSize * minSpacePercentage / 100).max(suggestedMinimumHeight)
+        val widthAdjusted = (widthSize * minSpacePercentage / 100).max(getSuggestedMinimumWidth())
+        val heightAdjusted = (heightSize * minSpacePercentage / 100).max(getSuggestedMinimumHeight())
 
         val desiredWidth = widthAdjusted - (widthAdjusted % 9)
         val desiredHeight = heightAdjusted - (heightAdjusted % 9)
@@ -69,8 +70,8 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
     }
 
     private def drawBackground(canvas: Canvas) {
-        rectPaint.color = getColor(R.color.chess_board_background_color)
-        canvas.drawRect(0.toFloat, 0.toFloat, measuredWidth.toFloat, measuredHeight.toFloat, rectPaint)
+        rectPaint.setColor(getColor(R.color.chess_board_background_color))
+        canvas.drawRect(0.toFloat, 0.toFloat, getMeasuredWidth().toFloat, getMeasuredHeight().toFloat, rectPaint)
     }
 
     private def drawCells(canvas: Canvas, cellSize: Int) {
@@ -80,7 +81,7 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
                 val color = if ((row + col) % 2 == 0) R.color.chess_board_white_cells_color else R.color.chess_board_black_cells_color
                 val x = (cellSize / 2 + col * cellSize).toFloat
                 val y = (cellSize / 2 + row * cellSize).toFloat
-                rectPaint.color = getColor(color)
+                rectPaint.setColor(getColor(color))
                 canvas.drawRect(x, y, x + cellSize, y + cellSize, rectPaint)
             }
         }
@@ -96,7 +97,7 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
             val y2 = (cellSize * 8.9).toFloat
             val x = (cellSize * 0.9 + file * cellSize).toFloat
 
-            fontPaint.color = getColor(R.color.chess_board_font_color)
+            fontPaint.setColor(getColor(R.color.chess_board_font_color))
 
             canvas.drawText(s"$letter", x, y1, fontPaint)
             canvas.drawText(s"$letter", x, y2, fontPaint)
@@ -107,7 +108,7 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
             val x2 = (cellSize * 8.65).toFloat
             val y = (cellSize * 1.2 + rank * cellSize).toFloat
 
-            fontPaint.color = getColor(R.color.chess_board_font_color)
+            fontPaint.setColor(getColor(R.color.chess_board_font_color))
 
             canvas.drawText(s"$digit", x1, y, fontPaint)
             canvas.drawText(s"$digit", x2, y, fontPaint)
@@ -132,13 +133,13 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
                         case Piece.BLACK_QUEEN => R.drawable.chess_qd
                         case Piece.WHITE_KING => R.drawable.chess_kl
                         case Piece.BLACK_KING => R.drawable.chess_kd
-                        case _ => throw IllegalArgumentException(s"Unrecognized piece fen $piece !")
+                        case _ => throw  new IllegalArgumentException(s"Unrecognized piece fen $piece !")
                     }
                     val x = (cellSize * (0.5 + (if (reversed) 7 - cellFile else cellFile))).toInt
                     val y = (cellSize * (0.5 + (if (reversed) cellRank else 7 - cellRank))).toInt
 
-                    val drawable = VectorDrawableCompat.create(context.resources, imageRes, null)
-                    drawable.bounds = Rect(x, y, x + cellSize, y + cellSize)
+                    val drawable = VectorDrawableCompat.create(context.getResources(), imageRes, null)
+                    drawable.setBounds(new Rect(x, y, x + cellSize, y + cellSize))
                     drawable.draw(canvas)
                 }
             }
@@ -146,10 +147,10 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
     }
 
     private def drawPlayerTurn(canvas: Canvas, cellSize: Int) {
-        val color = if (relatedPosition().sideToMove == Side.WHITE) R.color.chess_board_white_player_turn_color else R.color.chess_board_black_player_turn_color
+        val color = if (relatedPosition().getSideToMove() == Side.WHITE) R.color.chess_board_white_player_turn_color else R.color.chess_board_black_player_turn_color
         val location = (8.5 * cellSize).toFloat
         val locationEnd = (location + cellSize * 0.5).toFloat
-        rectPaint.color = getColor(color)
+        rectPaint.setColor(getColor(color))
         canvas.drawRect(location, location, locationEnd, locationEnd, rectPaint)
     }
 
@@ -161,7 +162,7 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
 
             val x = (cellSize * (0.5 + (if (reversed) 7 - fileIndex else fileIndex))).toFloat
             val y = (cellSize * (0.5 + (if (reversed) rankIndex else 7 - rankIndex))).toFloat
-            rectPaint.color = getColor(R.color.chess_board_move_start_cell_highlighting)
+            rectPaint.setColor(getColor(R.color.chess_board_move_start_cell_highlighting))
             canvas.drawRect(x, y, x + cellSize, y + cellSize, rectPaint)
         }
 
@@ -172,7 +173,7 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
 
             val x = (cellSize * (0.5 + (if (reversed) 7 - fileIndex else fileIndex))).toFloat
             val y = (cellSize * (0.5 + (if (reversed) rankIndex else 7 - rankIndex))).toFloat
-            rectPaint.color = getColor(R.color.chess_board_move_current_cell_highlighting)
+            rectPaint.setColor(getColor(R.color.chess_board_move_current_cell_highlighting))
             canvas.drawRect(x, y, x + cellSize, y + cellSize, rectPaint)
         }
     }
@@ -185,11 +186,11 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
 
             val x = (cellSize * (1 + (if (reversed) 7 - fileIndex else fileIndex))).toFloat
             val y = (cellSize * (1 + (if (reversed) rankIndex else 7 - rankIndex))).toFloat
-            rectPaint.color = getColor(R.color.chess_board_move_current_cell_highlighting)
-            rectPaint.strokeWidth = cellSize * 0.1f
+            rectPaint.setColor(getColor(R.color.chess_board_move_current_cell_highlighting))
+            rectPaint.setStrokeWidth(cellSize * 0.1f)
 
-            canvas.drawLine(0f, y, width.toFloat, y, rectPaint)
-            canvas.drawLine(x, 0f, x, height.toFloat, rectPaint)
+            canvas.drawLine(0f, y, getWidth().toFloat, y, rectPaint)
+            canvas.drawLine(x, 0f, x, getHeight().toFloat, rectPaint)
         }
     }
 
@@ -217,8 +218,8 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
 
         val arrowLength = distance * 0.15f
 
-        paint.color = getColor(R.color.chess_board_highlighted_move_arrow_color)
-        paint.strokeWidth = cellSize * 0.1f
+        paint.setColor(getColor(R.color.chess_board_highlighted_move_arrow_color))
+        paint.setStrokeWidth(cellSize * 0.1f)
 
         canvas.save()
         canvas.translate(fromPointX, fromPointY)
@@ -235,9 +236,9 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
 
 
     override def onDraw(canvas: Canvas) {
-        val cellSize = measuredWidth.min(measuredHeight) / 9
-        fontPaint.textSize = (cellSize * 0.4).toFloat
-        fontPaint.typeface = Typeface.defaultFromStyle(Typeface.BOLD)
+        val cellSize = getMeasuredWidth().min(getMeasuredHeight()) / 9
+        fontPaint.setTextSize((cellSize * 0.4).toFloat)
+        fontPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
 
         drawBackground(canvas)
         drawCells(canvas, cellSize)
@@ -264,7 +265,7 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
         invalidate()
     }
 
-    def toFEN(): String = relatedPosition().fen
+    def toFEN(): String = relatedPosition().getFEN()
 
     def setFromFen(boardFen: String) {
         replacePositionWith(boardFen)

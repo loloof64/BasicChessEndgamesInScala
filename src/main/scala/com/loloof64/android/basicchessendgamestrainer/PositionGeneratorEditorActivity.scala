@@ -11,7 +11,7 @@ import android.widget.TextView
 class PositionGeneratorEditorActivity extends AppCompatActivity() {
 
     implicit val context = this
-    lazy val vh: TypedViewHolder.main = TypedViewHolder.setContentView(this, TR.layout.activity_position_generator_editor)
+    lazy val vh: TypedViewHolder.activity_position_generator_editor = TypedViewHolder.setContentView(this, TR.layout.activity_position_generator_editor)
 
     /**
      * The [android.support.v4.view.PagerAdapter] that will provide
@@ -27,22 +27,22 @@ class PositionGeneratorEditorActivity extends AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_position_generator_editor)
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(vh.toolbar)
         getSupportActionBar().setDisplayHomeAsUpEnabled(true)
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager())
 
         // Set up the ViewPager with the sections adapter.
-        vh.container.adapter = mSectionsPagerAdapter
+        vh.container.setAdapter(mSectionsPagerAdapter)
 
-        vh.container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
-        vh.tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(vh.container))
+        vh.container.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(vh.tabs))
+        vh.tabs.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(vh.container))
 
-        vh.fab.setOnClickListener { view ->
+        vh.fab.setOnClickListener(new View.OnClickListener { view =>
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
-        }
+        })
 
     }
 

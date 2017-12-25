@@ -5,6 +5,8 @@ import android.content.Context
 
 class MyApplication extends Application(){
 
+    import MyApplication._
+
     override def onCreate() {
         super.onCreate()
         setApplicationContext(this)

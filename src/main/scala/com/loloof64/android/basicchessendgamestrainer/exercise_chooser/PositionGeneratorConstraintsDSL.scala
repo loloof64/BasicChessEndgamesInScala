@@ -1,5 +1,7 @@
 package com.loloof64.android.basicchessendgamestrainer.exercise_chooser
 
+import com.github.ghik.silencer.silent
+
 object ConstraintsTypes {
 
     case class BoardLocation(file: Int, rank: Int)
@@ -15,10 +17,10 @@ object ConstraintsTypes {
     <li>playerHasWhite: Boolean</li>
     </ol>
     */
-    @SuppressWarning("UNUSED")
+    @silent
     type KingsMutualConstraint = (BoardLocation, BoardLocation, Boolean) => Boolean
 
-    @SuppressWarning("UNUSED")
+    @silent
     /**
     Parameters are
     <ol>
@@ -37,7 +39,7 @@ object ConstraintsTypes {
     <li>playerHasWhite: Boolean</li>
     </ol>
     */
-    @SuppressWarning("UNUSED")
+    @silent
     type SingleKingConstraint = (BoardLocation, Boolean) => Boolean
 
     /**
@@ -48,7 +50,7 @@ object ConstraintsTypes {
     <li>playerHasWhite: Boolean</li>
     </ol>
     */
-    @SuppressWarning("UNUSED")
+    @silent
     type MutualConstraint = (BoardLocation, BoardLocation, Boolean) => Boolean
 
     /**
@@ -60,7 +62,7 @@ object ConstraintsTypes {
     <li>playerHasWhite: Boolean</li>
     </ol>
     */
-    @SuppressWarning("UNUSED")
+    @silent
     type OtherPieceGlobalConstraint = (BoardLocation, BoardLocation, BoardLocation, Boolean) => Boolean
 
     /**
@@ -71,7 +73,7 @@ object ConstraintsTypes {
     <li>playerHasWhite: Boolean</li>
     </ol>
     */
-    @SuppressWarning("UNUSED")
+    @silent
     type OtherPieceMutualConstraint = (BoardLocation, BoardLocation, Boolean) => Boolean
 
     /**
@@ -82,11 +84,11 @@ object ConstraintsTypes {
     <li>playerHasWhite: Boolean</li>
     </ol>
     */
-    @SuppressWarning("UNUSED")
+    @silent
     type OtherPieceIndexedConstraint = (Int, BoardLocation, Boolean) => Boolean
 
     class PieceType private(val ordinal: Int) {
-        @SuppressWarning("UNUSED")
+        @silent
         def belongingTo(owner: Side) = PieceKind(pieceType = this, side = owner)
     }
 
@@ -106,7 +108,7 @@ object ConstraintsTypes {
     }
 
     case class PieceKind(val pieceType: PieceType, val side: Side){
-        @SuppressWarning("UNUSED")
+        @silent
         def inCount(instances: Int) = PieceKindCount(pieceKind = this, count = instances)
     }
     case class PieceKindCount(val pieceKind: PieceKind, val count: Int)
@@ -145,26 +147,26 @@ object ConstraintsConstants {
 }
 
 import ConstraintsTypes._
-@SuppressWarning("UNUSED")
+@silent
 class PositionConstraints (
-    val playerKing: SingleKingConstraint = { true },
-    val computerKing: SingleKingConstraint = { true },
+    val playerKing: SingleKingConstraint = { (_, _) => true },
+    val computerKing: SingleKingConstraint = { (_, _) => true },
     /**
     Constraint between both kings
     */
-    val kingsMutualConstraint: KingsMutualConstraint = { true },
-    val otherPiecesCount: Array[PieceKindCount] = new Array(),
+    val kingsMutualConstraint: KingsMutualConstraint = { (_,_,_) => true },
+    val otherPiecesCount: Array[PieceKindCount] = Array(),
     /**
     Specific constraint for each piece (kind and side).
     */
-    val otherPiecesGlobalConstraint: Map[PieceKind, (OtherPieceGlobalConstraint) => Boolean] = new Map(),
+    val otherPiecesGlobalConstraint: Map[PieceKind, OtherPieceGlobalConstraint] = Map(),
     /**
     General constraint between 2 pieces of the same kind
     */
-    val otherPiecesMutualConstraint: Map[PieceKind, (OtherPieceMutualConstraint) => Boolean] = new Map(),
+    val otherPiecesMutualConstraint: Map[PieceKind, OtherPieceMutualConstraint] = Map(),
 
     /**
     Constraint between 2 pieces of the same kind, but only relying on the apparition order.
     */
-    val otherPiecesIndexedConstraint: Map[PieceKind, (OtherPieceIndexedConstraint) => Boolean] = new Map()
+    val otherPiecesIndexedConstraint: Map[PieceKind, OtherPieceIndexedConstraint] = Map()
 )

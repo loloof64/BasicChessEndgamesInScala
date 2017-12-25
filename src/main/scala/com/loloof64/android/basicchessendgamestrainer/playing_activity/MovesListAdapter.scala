@@ -3,10 +3,12 @@ package com.loloof64.android.basicchessendgamestrainer.playing_activity
 import android.content.Context
 import android.graphics.Typeface
 import android.support.v7.widget.RecyclerView
-import android.view.{LayoutInflater, ViewGroup, LinearLayout, TextView}
+import android.view.{LayoutInflater, ViewGroup, View}
+import android.widget.{TextView, LinearLayout}
 import com.loloof64.android.basicchessendgamestrainer.MyApplication
 import com.loloof64.android.basicchessendgamestrainer.R
 import java.lang.ref.WeakReference
+import com.github.ghik.silencer.silent
 
 case class RowInput(val san:String, val relatedFen: String, val moveToHighlight: MoveToHighlight)
 case class MoveToHighlight(val startFile: Int, val startRank : Int,
@@ -21,34 +23,37 @@ object MovesListAdapter {
     class ViewHolder(val textView: TextView) extends RecyclerView.ViewHolder(textView)
 }
 
-class MovesListAdapter(private val weakRefContext: WeakReference[Context], private val itemClickListener: ItemClickListener) extends RecyclerView.Adapter[ViewHolder]() {
-    @SuppressWarning("DEPRECATION")
-    private def getColor(colorResId: Int): Int = MyApplication.getApplicationContext().resources.getColor(colorResId)
+class MovesListAdapter(private val weakRefContext: WeakReference[Context], private val itemClickListener: ItemClickListener) extends RecyclerView.Adapter[MovesListAdapter.ViewHolder]() {
+    import MovesListAdapter.ViewHolder
+    import scala.collection.mutable.ArrayBuffer
+
+    @silent
+    private def getColor(colorResId: Int): Int = MyApplication.getApplicationContext().getResources().getColor(colorResId)
 
     override def onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = {
-        val layout = LayoutInflater.from(parent.context).inflate(
+        val layout = LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.playing_activity_moves_list_single_item, parent, false).asInstanceOf[LinearLayout]
         val txtView = layout.findViewById(R.id.moves_list_view_item).asInstanceOf[TextView]
-        val font = Typeface.createFromAsset(MyApplication.appContext.assets, "FreeSerif.ttf")
-        txtView.typeface = font
+        val font = Typeface.createFromAsset(MyApplication.appContext.getAssets(), "FreeSerif.ttf")
+        txtView.setTypeface(font)
 
         layout.removeView(txtView)
-        return ViewHolder(txtView)
+        return new ViewHolder(txtView)
     }
 
     override def onBindViewHolder(holder: ViewHolder, position: Int) {
-        val currentPosition = holder.adapterPosition
-        holder.textView.text = inputsList[currentPosition].san
+        val currentPosition = holder.getAdapterPosition()
+        holder.textView.setText( inputsList(currentPosition).san )
         holder.textView.setBackgroundColor(getColor(
                 if (position == _selectedNavigationItem && _switchingPositionFeatureActive) R.color.moves_history_cell_selected_color
                 else R.color.moves_history_cell_standard_color
         ))
         if (position%3 > 0) {
-            holder.textView.setOnClickListener {
+            holder.textView.setOnClickListener(new View.OnClickListener { _ =>
                 _selectedNavigationItem = currentPosition
                 updateHostView()
                 update()
-            }
+            })
         }
     }
 
@@ -57,7 +62,7 @@ class MovesListAdapter(private val weakRefContext: WeakReference[Context], priva
     }
 
     def addPosition(san: String, fen: String, moveToHighlight: MoveToHighlight){
-        inputsList.add(RowInput(san, fen, moveToHighlight))
+        inputsList += RowInput(san, fen, moveToHighlight)
         update()
     }
 
@@ -71,7 +76,7 @@ class MovesListAdapter(private val weakRefContext: WeakReference[Context], priva
             if (_selectedNavigationItem > 1) {
                 _selectedNavigationItem -= 1
                 val pointingToAMoveNumber = _selectedNavigationItem % 3 == 0
-                val pointingToAMoveAnnotation = items[_selectedNavigationItem].san == ".."
+                val pointingToAMoveAnnotation = items(_selectedNavigationItem).san == ".."
                 if (pointingToAMoveNumber){
                     if (_selectedNavigationItem > 1) _selectedNavigationItem -= 1 // going further back
                     else _selectedNavigationItem += 1 //cancelling
@@ -110,9 +115,9 @@ class MovesListAdapter(private val weakRefContext: WeakReference[Context], priva
         }
     }
 
-    def items: Array[RowInput] = inputsList.toTypedArray()
+    def items: Array[RowInput] = inputsList.toArray
     def items_=(value: Array[RowInput]){
-        inputsList = value.toArrayBuffer
+        inputsList = ArrayBuffer(value: _*)
         update()
     }
 
@@ -128,7 +133,7 @@ class MovesListAdapter(private val weakRefContext: WeakReference[Context], priva
     private def updateHostView(){ // switch the current position in host view (Playing activity)
         val relatedFen = inputsList(_selectedNavigationItem).relatedFen
         val moveToHighlight = inputsList(_selectedNavigationItem).moveToHighlight
-        if (relatedFen.isNotEmpty() && _switchingPositionFeatureActive) {
+        if (!(relatedFen.isEmpty) && _switchingPositionFeatureActive) {
             itemClickListener.onClick(weakRefContext, _selectedNavigationItem, relatedFen, moveToHighlight)
         }
     }

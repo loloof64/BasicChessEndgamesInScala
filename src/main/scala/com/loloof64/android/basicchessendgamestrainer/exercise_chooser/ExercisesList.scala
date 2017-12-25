@@ -5,6 +5,7 @@ import com.loloof64.android.basicchessendgamestrainer.R
 object Exercises {
 
     import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.ConstraintsConstants._
+    import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.ConstraintsTypes._
 
     val availableGenerators = Array(
         ExerciseInfo(mustWin = true, textId = R.string.exercise_krr_k, constraints = KRRvK),
@@ -71,16 +72,16 @@ object Exercises {
 
     private val KPvK_I = new PositionConstraints(
         playerKing = {(location, playerHasWhite) =>
-            rank == (if (playerHasWhite) Rank6 else Rank3) &&
+            location.rank == (if (playerHasWhite) Rank6 else Rank3) &&
             (FileB to FileG).contains(location.file)
         },
 
         computerKing = {(location, playerHasWhite) =>
-            rank == (if (playerHasWhite) Rank8 else Rank1)
+            location.rank == (if (playerHasWhite) Rank8 else Rank1)
         },
 
-        kingsMutualConstraint = {
-            playerKingFile == computerKingFile
+        kingsMutualConstraint = {(playerKingLocation, computerKingLocation, playerHasWhite) => 
+            playerKingLocation.file == computerKingLocation.file
         },
 
         otherPiecesCount = Array(
@@ -88,45 +89,45 @@ object Exercises {
         ),
 
         otherPiecesGlobalConstraint = Map (
-            (Pawn belongingTo Player) -> {
-                (rank == (if (playerHasWhite) Rank5 else Rank4)) &&
-                (file == playerKingFile)
+            (Pawn belongingTo Player) -> {(pieceLocation, playerKingLocation, computerKingLocation, playerHasWhite) =>
+                (pieceLocation.rank == (if (playerHasWhite) Rank5 else Rank4)) &&
+                (pieceLocation.file == playerKingLocation.file)
             }
         )
     )
 
     private val KPvK_II = new PositionConstraints(
         playerKing = {(location, playerHasWhite) =>
-                rank == (if (playerHasWhite) Rank1 else Rank8)
+                location.rank == (if (playerHasWhite) Rank1 else Rank8)
         },
 
         computerKing = {(location, playerHasWhite) =>
-                rank == (if (playerHasWhite) Rank4 else Rank5)
+                location.rank == (if (playerHasWhite) Rank4 else Rank5)
         },
 
-        kingsMutualConstraint = {
-            Math.abs(playerKingFile - computerKingFile) <= 1
+        kingsMutualConstraint = {(playerKingLocation, computerKingLocation, playerHasWhite) => 
+            Math.abs(playerKingLocation.file - computerKingLocation.file) <= 1
         },
 
         otherPiecesCount = Array(
-            add(Pawn belongingTo Computer inCount 1)
+            Pawn belongingTo Computer inCount 1
         ),
 
         otherPiecesGlobalConstraint = Map(
-            (Pawn belongingTo Computer) -> {
-                (if (playerHasWhite) (Rank3 to Rank5) else (Rank4 to Rank6)).contains(location.rank) &&
-                (file == playerKingFile)
+            (Pawn belongingTo Computer) -> {(pieceLocation, playerKingLocation, computerKingLocation, playerHasWhite) =>
+                (if (playerHasWhite) (Rank3 to Rank5) else (Rank4 to Rank6)).contains(pieceLocation.rank) &&
+                (pieceLocation.file == playerKingLocation.file)
             }
         )
     )
 
     private val KPPPvKPPP = new PositionConstraints(
-        playerKing = {
-            rank == (if (playerHasWhite) Rank1 else Rank8)
+        playerKing = {(location, playerHasWhite) =>
+            location.rank == (if (playerHasWhite) Rank1 else Rank8)
         },
 
-        computerKing = {
-            rank == (if (playerHasWhite) Rank1 else Rank8)
+        computerKing = {(location, playerHasWhite) =>
+            location.rank == (if (playerHasWhite) Rank1 else Rank8)
         },
 
         otherPiecesCount = Array(
@@ -135,26 +136,26 @@ object Exercises {
         ),
 
         otherPiecesGlobalConstraint = Map (
-            (Pawn belongingTo Player) -> {
-                rank == (if (playerHasWhite) Rank5 else Rank4)
+            (Pawn belongingTo Player) -> {(pieceLocation, playerKingLocation, computerKingLocation, playerHasWhite) =>
+                pieceLocation.rank == (if (playerHasWhite) Rank5 else Rank4)
             },
-            (Pawn belongingTo Computer) -> {
-                rank == (if (playerHasWhite) Rank7 else Rank2)
+            (Pawn belongingTo Computer) -> {(pieceLocation, playerKingLocation, computerKingLocation, playerHasWhite) =>
+                pieceLocation.rank == (if (playerHasWhite) Rank7 else Rank2)
             }
         ),
 
         otherPiecesIndexedConstraint = Map (
-            (Pawn belongingTo Player) -> {
-                file == apparitionIndex
+            (Pawn belongingTo Player) -> {(apparitionIndex, pieceLocation, playerHasWhite) =>
+                pieceLocation.file == apparitionIndex
             },
-            (Pawn belongingTo Computer) -> {
-                file == apparitionIndex
+            (Pawn belongingTo Computer) -> {(apparitionIndex, pieceLocation, playerHasWhite) =>
+                pieceLocation.file == apparitionIndex
             }
         )
     )
 
     private val KNBvK = new PositionConstraints(
-        computerKing = {
+        computerKing = {(location, playerHasWhite) =>
             (FileC to FileF).contains(location.file) &&
             (Rank3 to Rank6).contains(location.rank)
         },

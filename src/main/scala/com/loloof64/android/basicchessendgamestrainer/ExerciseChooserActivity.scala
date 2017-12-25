@@ -40,7 +40,7 @@ class ExerciseChooserActivity extends AppCompatActivity {
         vh.exercisesListView.setLayoutManager(new LinearLayoutManager(this))
         vh.exercisesListView.setAdapter(new ExercisesListAdapter(availableGenerators, new ItemClickListener {
             override def onClick(position: Int) {
-                val intent = new Intent(context, PlayingActivity::getClass)
+                val intent = new Intent(context, PlayingActivity.getClass)
                 val bundle = new Bundle()
                 bundle.putInt(PlayingActivity.generatorIndexKey, position)
                 intent.putExtras(bundle)
@@ -57,7 +57,7 @@ class ExerciseChooserActivity extends AppCompatActivity {
     override def onOptionsItemSelected(item: MenuItem): Boolean = {
         return item.getItemId() match {
             case R.id.action_help => {
-                val intent = Intent(this, HelpActivity.getClass)
+                val intent = new Intent(this, classOf[HelpActivity])
                 startActivity(intent)
                 return true
             }

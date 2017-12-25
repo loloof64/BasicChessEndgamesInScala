@@ -9,11 +9,13 @@ class PositionGenerationLoopException extends Exception()
 
 object BoardUtils {
     def buildSquare(rank: Int, file: Int) =
-        Square.encode(Rank.values()[rank], File.values()[file])
+        Square.encode(Rank.values()(rank), File.values()(file))
 
 }
 
 class PositionGenerator(private val constraints : PositionConstraints) {
+
+    import BoardUtils.buildSquare
 
     private val maxLoopsIterations = 250
 
@@ -28,7 +30,7 @@ class PositionGenerator(private val constraints : PositionConstraints) {
     )
 
     private def buildPositionOrNullIfCellAlreadyOccupied(startFen: String, pieceToAdd: Piece, pieceCell: Square): Board = {
-        val builtPosition = Board()
+        val builtPosition = new Board()
         builtPosition.loadFromFEN(startFen)
 
         val wantedCellOccupied = builtPosition.getPiece(pieceCell) != Piece.NONE
@@ -38,27 +40,28 @@ class PositionGenerator(private val constraints : PositionConstraints) {
         return builtPosition
     }
 
-    private def enemyKingInChessFor(position: Board, playerHasWhite: Boolean) : Boolean =
-        Board().apply {
-            loadFromFEN(position.fen)
-            sideToMove = if (playerHasWhite) LibSide.BLACK else LibSide.WHITE
-        }.isKingAttacked
+    private def enemyKingInChessFor(position: Board, playerHasWhite: Boolean) : Boolean = {
+        val b = new Board()
+        b.loadFromFEN(position.getFEN())
+        b.setSideToMove(if (playerHasWhite) LibSide.BLACK else LibSide.WHITE)
+        b.isKingAttacked
+    }
 
     def generatePosition(playerHasWhite: Boolean = true): String =  {
         _position.loadFromFEN( s"8/8/8/8/8/8/8/8 ${if (playerHasWhite) 'w' else 'b'} - - 0 1")
-        _position.halfMoveCounter = 0
-        _position.moveCounter = 1
+        _position.setHalfMoveCounter(0)
+        _position.setMoveCounter(1)
 
         try {
             placeKings(playerHasWhite)
             placeOtherPieces(playerHasWhite)
-        } catch (e: PositionGenerationLoopException){
-            return ""
+        } catch {
+            case _:PositionGenerationLoopException => return ""
         }
 
-        Logger.getLogger("BasicChessEndgamesTrainer").info(s"Generated position is '${_position.fen}'")
+        Logger.getLogger("BasicChessEndgamesTrainer").info(s"Generated position is '${_position.getFEN() }'")
 
-        return _position.fen
+        return _position.getFEN()
     }
 
     private var playerKingCell = BoardCoordinate(file = 0, rank = 0)
@@ -70,7 +73,7 @@ class PositionGenerator(private val constraints : PositionConstraints) {
 
             val kingCell = generateCell()
             val tempPosition = buildPositionOrNullIfCellAlreadyOccupied(
-                    startFen = _position.fen,
+                    startFen = _position.getFEN(),
                     pieceToAdd = if (playerHasWhite) Piece.WHITE_KING else Piece.BLACK_KING,
                     pieceCell = buildSquare(rank = kingCell.rank, file = kingCell.file)
             )
@@ -80,13 +83,13 @@ class PositionGenerator(private val constraints : PositionConstraints) {
             if (constraints.checkPlayerKingConstraint(
                     file = kingCell.file, rank = kingCell.rank,
                     playerHasWhite = playerHasWhite)) {
-                _position.loadFromFEN(tempPosition.fen)
+                _position.loadFromFEN(tempPosition.getFEN)
                 playerKingCell = kingCell
                 loopSuccess = true
                 break
             }
         }
-        if (!loopSuccess) throw PositionGenerationLoopException()
+        if (!loopSuccess) throw new PositionGenerationLoopException()
 
         loopSuccess = false
         for (iters <- 0 to maxLoopsIterations){  // setting up enemy king
@@ -94,7 +97,7 @@ class PositionGenerator(private val constraints : PositionConstraints) {
             val kingCell = generateCell()
 
             val tempPosition = buildPositionOrNullIfCellAlreadyOccupied(
-                    startFen = _position.fen,
+                    startFen = _position.getFEN(),
                     pieceToAdd = if (playerHasWhite) Piece.BLACK_KING else Piece.WHITE_KING,
                     pieceCell = buildSquare(
                             rank = kingCell.rank, file = kingCell.file
@@ -112,12 +115,12 @@ class PositionGenerator(private val constraints : PositionConstraints) {
                     playerHasWhite = playerHasWhite
             )) {
                 oppositeKingCell = kingCell
-                _position.loadFromFEN(tempPosition.fen)
+                _position.loadFromFEN(tempPosition.getFEN)
                 loopSuccess = true
                 break
             }
         }
-        if (!loopSuccess) throw PositionGenerationLoopException()
+        if (!loopSuccess) throw new PositionGenerationLoopException()
     }
 
     private def placeOtherPieces(playerHasWhite: Boolean){
@@ -143,7 +146,7 @@ class PositionGenerator(private val constraints : PositionConstraints) {
 
                     val pieceCell = generateCell()
                     val tempPosition = buildPositionOrNullIfCellAlreadyOccupied(
-                            startFen = _position.fen,
+                            startFen = _position.getFEN(),
                             pieceToAdd = pieceKindToPiece(kind, isWhitePiece),
                             pieceCell = buildSquare(
                                     rank = pieceCell.rank, file = pieceCell.file
@@ -169,7 +172,7 @@ class PositionGenerator(private val constraints : PositionConstraints) {
                             playerHasWhite = playerHasWhite,
                             playerKingFile = playerKingCell.file, playerKingRank = playerKingCell.rank,
                             computerKingFile = oppositeKingCell.file, computerKingRank = playerKingCell.rank)){
-                        _position.loadFromFEN(tempPosition.fen)
+                        _position.loadFromFEN(tempPosition.getFEN)
                         savedCoordinates += pieceCell
                         loopSuccess = true
                         break
