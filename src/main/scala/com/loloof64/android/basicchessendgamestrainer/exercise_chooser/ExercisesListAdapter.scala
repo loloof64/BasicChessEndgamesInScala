@@ -17,6 +17,8 @@ object ExercisesListAdapter {
     class ViewHolder(val textView: TextView) extends RecyclerView.ViewHolder(textView)
 }
 
+import ExercisesListAdapter.ViewHolder
+
 class ExercisesListAdapter(private val exercisesList: List[ExerciseInfo],
                            private val itemClickListener: ItemClickListener) extends RecyclerView.Adapter[ViewHolder](){
 

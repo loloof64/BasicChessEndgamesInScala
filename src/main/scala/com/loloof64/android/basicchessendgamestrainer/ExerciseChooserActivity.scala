@@ -26,20 +26,19 @@ import android.view.{Menu, MenuItem}
 import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.{ExercisesListAdapter, ItemClickListener}
 import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.Exercises.availableGenerators
 import com.loloof64.android.basicchessendgamestrainer.playing_activity.EngineInteraction
-import kotlinx.android.synthetic.main.activity_exercise_chooser._
 
 class ExerciseChooserActivity extends AppCompatActivity {
 
     implicit val context = this
-    lazy val vh: TypedViewHolder.main = TypedViewHolder.setContentView(this, TR.layout.activity_exercise_chooser)
+    lazy val vh: TypedViewHolder.activity_exercise_chooser = TypedViewHolder.setContentView(this, TR.layout.activity_exercise_chooser)
 
     override def onCreate(savedInstanceState: Bundle): Unit = {
         super.onCreate(savedInstanceState)
 
         EngineInteraction.copyStockfishIntoInternalMemoryIfNecessary()
 
-        vh.exercisesListView.layoutManager = new LinearLayoutManager(this)
-        vh.exercisesListView.adapter = new ExercisesListAdapter(availableGenerators, new ItemClickListener {
+        vh.exercisesListView.setLayoutManager(new LinearLayoutManager(this))
+        vh.exercisesListView.setAdapter(new ExercisesListAdapter(availableGenerators, new ItemClickListener {
             override def onClick(position: Int) {
                 val intent = new Intent(context, PlayingActivity::getClass)
                 val bundle = new Bundle()
@@ -47,16 +46,16 @@ class ExerciseChooserActivity extends AppCompatActivity {
                 intent.putExtras(bundle)
                 startActivity(intent)
             }
-        })
+        }))
     }
 
     override def onCreateOptionsMenu(menu: Menu): Boolean =  {
-        menuInflater.inflate(R.menu.menu_exercise_chooser, menu)
+        getMenuInflater().inflate(R.menu.menu_exercise_chooser, menu)
         return true
     }
 
     override def onOptionsItemSelected(item: MenuItem): Boolean = {
-        return item.itemId match {
+        return item.getItemId() match {
             case R.id.action_help => {
                 val intent = Intent(this, HelpActivity.getClass)
                 startActivity(intent)

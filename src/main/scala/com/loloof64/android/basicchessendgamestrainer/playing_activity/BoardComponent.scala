@@ -18,7 +18,7 @@ case class SquareCoordinates(val file: Int, val rank: Int)
 
 abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAttr: Int) extends View(context, attrs, defStyleAttr) {
 
-    @SuppressWarnings("DEPRECATION")
+    @SuppressWarning("DEPRECATION")
     def getColor(colorResId: Int): Int = resources.getColor(colorResId)
 
     def this(context: Context, attrs: AttributeSet) { this(context, attrs, 0) }

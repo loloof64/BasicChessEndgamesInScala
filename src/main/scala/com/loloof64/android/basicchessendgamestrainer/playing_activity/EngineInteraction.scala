@@ -100,7 +100,7 @@ object EngineInteraction {
     private var processCommunicator: ProcessCommunicator
 
     private lazy val stockfishName = {
-        @SuppressWarnings("DEPRECATION")
+        @SuppressWarning("DEPRECATION")
         val suffix = Build.CPU_ABI match {
             case "armeabi-v7a" => "arm7"
             case "arm64-v8a" => "arm8"

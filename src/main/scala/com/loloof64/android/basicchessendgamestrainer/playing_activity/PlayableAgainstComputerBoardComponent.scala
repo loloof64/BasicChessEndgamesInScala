@@ -145,7 +145,7 @@ case class PlayableAgainstComputerBoardComponent(context: Context, attrs: Attrib
     private var _highlightedStartCell:SquareCoordinates = null
     private var _pendingPromotionInfo:PromotionInfo = null
 
-    @SuppressWarnings("ClickableViewAccessibility")
+    @SuppressWarning("ClickableViewAccessibility")
     override def onTouchEvent(event: MotionEvent): Boolean = {
         val whiteTurn = _relatedPosition.sideToMove == Side.WHITE
         val notPlayerTurn = _playerHasWhite != whiteTurn

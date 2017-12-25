@@ -6,10 +6,12 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.{Fragment, FragmentManager, FragmentPagerAdapter}
 import android.support.v7.app.AppCompatActivity
 import android.view._
-import kotlinx.android.synthetic.main.activity_position_generator_editor._
-import kotlinx.android.synthetic.main.fragment_position_generator_editor.view._
+import android.widget.TextView
 
 class PositionGeneratorEditorActivity extends AppCompatActivity() {
+
+    implicit val context = this
+    lazy val vh: TypedViewHolder.main = TypedViewHolder.setContentView(this, TR.layout.activity_position_generator_editor)
 
     /**
      * The [android.support.v4.view.PagerAdapter] that will provide
@@ -26,18 +28,18 @@ class PositionGeneratorEditorActivity extends AppCompatActivity() {
         setContentView(R.layout.activity_position_generator_editor)
 
         setSupportActionBar(toolbar)
-        supportActionBar.setDisplayHomeAsUpEnabled(true)
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true)
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(supportFragmentManager)
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager())
 
         // Set up the ViewPager with the sections adapter.
-        container.adapter = mSectionsPagerAdapter
+        vh.container.adapter = mSectionsPagerAdapter
 
-        container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
-        tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
+        vh.container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
+        vh.tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(vh.container))
 
-        fab.setOnClickListener { view ->
+        vh.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
@@ -47,7 +49,7 @@ class PositionGeneratorEditorActivity extends AppCompatActivity() {
 
     override def onCreateOptionsMenu(menu: Menu): Boolean =  {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_position_generator_editor, menu)
+        getMenuInflater().inflate(R.menu.menu_position_generator_editor, menu)
         return true
     }
 
@@ -55,7 +57,7 @@ class PositionGeneratorEditorActivity extends AppCompatActivity() {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        val id = item.itemId
+        val id = item.getItemId()
 
         if (id == R.id.action_settings) {
             return true
@@ -91,7 +93,8 @@ class PositionGeneratorEditorActivity extends AppCompatActivity() {
         override def onCreateView(inflater: LayoutInflater, container: ViewGroup,
                                   savedInstanceState: Bundle): View = {
             val rootView = inflater.inflate(R.layout.fragment_position_generator_editor, container, false)
-            rootView.section_label.text = getString(R.string.section_format, arguments.getInt(ARG_SECTION_NUMBER))
+            val section_label = rootView.findViewById(R.id.section_label).asInstanceOf[TextView]
+            section_label.setText(getString(R.string.section_format, getArguments().getInt(PlaceholderFragment.ARG_SECTION_NUMBER)))
             return rootView
         }
 
@@ -109,10 +112,10 @@ class PositionGeneratorEditorActivity extends AppCompatActivity() {
             * number.
             */
         def newInstance(sectionNumber: Int): PlaceholderFragment = {
-            val fragment = PlaceholderFragment()
-            val args = Bundle()
+            val fragment = new PlaceholderFragment()
+            val args = new Bundle()
             args.putInt(ARG_SECTION_NUMBER, sectionNumber)
-            fragment.arguments = args
+            fragment.setArguments(args)
             return fragment
         }
     }

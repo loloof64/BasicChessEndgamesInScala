@@ -22,7 +22,7 @@ object MovesListAdapter {
 }
 
 class MovesListAdapter(private val weakRefContext: WeakReference[Context], private val itemClickListener: ItemClickListener) extends RecyclerView.Adapter[ViewHolder]() {
-    @SuppressWarnings("DEPRECATION")
+    @SuppressWarning("DEPRECATION")
     private def getColor(colorResId: Int): Int = MyApplication.getApplicationContext().resources.getColor(colorResId)
 
     override def onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = {
