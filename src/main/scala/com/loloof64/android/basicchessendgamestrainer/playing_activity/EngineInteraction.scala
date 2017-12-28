@@ -28,22 +28,22 @@ class ProcessCommunicator(process: Process) extends Runnable {
     }
 
     private var mustStop = false
-    private val processWriter = new PrintWriter(process.getOutputStream())
-    private val processInput = new BufferedReader(new InputStreamReader(process.getInputStream()))
+    private val processWriter = new PrintWriter(process.getOutputStream)
+    private val processInput = new BufferedReader(new InputStreamReader(process.getInputStream))
 }
 
 object EngineInteraction {
 
     def processOutput(outputString: String) {
         def runOnUI(block : () => Unit){
-            new Handler(Looper.getMainLooper()).post(new Runnable{ def run() { block()} })
+            new Handler(Looper.getMainLooper).post(new Runnable{ def run() { block()} })
         }
 
         def stringToMove(str: String): Move = {
             def fileFromChar(c: Char):Int = c.toInt - 'a'.toInt
             def rankFromChar(c: Char):Int = c.toInt - '1'.toInt
 
-            return new Move(
+            new Move(
                 buildSquare( rankFromChar(str(1)), fileFromChar(str(0)) ),
                 buildSquare( rankFromChar(str(3)), fileFromChar(str(2)) )
             )
@@ -87,23 +87,22 @@ object EngineInteraction {
     }
 
     private val copyingThread = new Thread {
-        val inStream = MyApplication.appContext.getAssets().open(stockfishName)
+        val inStream:InputStream = MyApplication.appContext.getAssets.open(stockfishName)
         val outStream = new FileOutputStream(localStockfishPath)
         val buffer = new Array[Byte](4096)
-        var read: Int = 0
-        while (read >= 0) {
+        var read: Int = 1
+        while (read > 0) {
             read = inStream.read(buffer)
-            if (read >= 0) outStream.write(buffer, 0, read)
+            if (read > 0) outStream.write(buffer, 0, read)
         }
         outStream.close()
         inStream.close()
 
-        // Giving executable right
-        Runtime.getRuntime().exec("/system/bin/chmod 744 $localStockfishPath")
+        new File(localStockfishPath).setExecutable(true)
     }
 
-    private var uciObserver: SimpleUciObserver = null
-    private var processCommunicator: ProcessCommunicator = null
+    private var uciObserver: SimpleUciObserver = _
+    private var processCommunicator: ProcessCommunicator = _
 
     private lazy val stockfishName = {
         @silent
@@ -118,7 +117,7 @@ object EngineInteraction {
     }
 
     private lazy val localStockfishPath = {
-        s"${MyApplication.appContext.getFilesDir().getPath()}/stockfish"
+        s"${MyApplication.appContext.getFilesDir.getPath}/stockfish"
     }
 
     def initStockfishProcessIfNotDoneYet() : Boolean = {
@@ -129,11 +128,11 @@ object EngineInteraction {
         t.setDaemon(true)
         t.start()
 
-        return true
+        true
     }
 
     def copyStockfishIntoInternalMemoryIfNecessary(){
-        if (!(new File(localStockfishPath).exists())) {
+        if (!new File(localStockfishPath).exists) {
             copyingThread.start()
         }
     }

@@ -4,3 +4,9 @@ project/target
 bin/
 local.properties
 proguard-sbt.txt
+.idea/
+.gradle/
+build.gradle
+src/androidTest/androidTest.iml
+src/main/gen/
+src/main/main.iml

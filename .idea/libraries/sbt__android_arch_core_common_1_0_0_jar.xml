@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="sbt: android.arch.core:common:1.0.0:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/android.arch.core/common/jars/common-1.0.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/android.arch.core/common/srcs/common-1.0.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

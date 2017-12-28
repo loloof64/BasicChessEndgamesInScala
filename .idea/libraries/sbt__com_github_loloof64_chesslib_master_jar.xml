@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="sbt: com.github.loloof64:chesslib:master:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/com.github.loloof64/chesslib/jars/chesslib-master.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

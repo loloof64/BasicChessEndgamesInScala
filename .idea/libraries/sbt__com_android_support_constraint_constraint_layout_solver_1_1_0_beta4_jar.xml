@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="sbt: com.android.support.constraint:constraint-layout-solver:1.1.0-beta4:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/com.android.support.constraint/constraint-layout-solver/jars/constraint-layout-solver-1.1.0-beta4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
