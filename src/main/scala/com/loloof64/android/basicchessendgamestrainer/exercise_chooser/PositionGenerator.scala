@@ -165,16 +165,19 @@ class PositionGenerator(private val constraints : PositionConstraints) {
                     if (tempPosition != null && !enemyKingInChessFor(tempPosition, playerHasWhite)) {
 
                         // If for any previous piece of same kind, mutual constraint is not respected, will loop another time
-                        if (!savedCoordinates.exists { current => !constraints.otherPieceMutualConstraint(kind)(
+                        if (savedCoordinates.forall { current => !constraints.otherPieceMutualConstraint.keySet.contains(kind) ||
+                            constraints.otherPieceMutualConstraint(kind)(
                                 BoardLocation(current.file, current.rank),
                                 BoardLocation(pieceCell.file, pieceCell.rank),
                                 playerHasWhite) }) {
 
-                            if (constraints.otherPieceIndexedConstraint(kind)(index,
+                            if (!constraints.otherPieceIndexedConstraint.keySet.contains(kind) ||
+                                    constraints.otherPieceIndexedConstraint(kind)(index,
                                     BoardLocation(pieceCell.file, pieceCell.rank),
                                     playerHasWhite)) {
 
-                                if (constraints.otherPieceGlobalConstraint(kind)(
+                                if (!constraints.otherPieceGlobalConstraint.keySet.contains(kind) ||
+                                    constraints.otherPieceGlobalConstraint(kind)(
                                         BoardLocation(pieceCell.file, pieceCell.rank),
                                         BoardLocation(playerKingCell.file, playerKingCell.rank),
                                         BoardLocation(oppositeKingCell.file, oppositeKingCell.rank),
