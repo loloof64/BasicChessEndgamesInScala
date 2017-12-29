@@ -19,7 +19,7 @@ class PositionGenerator(private val constraints : PositionConstraints) {
 
     private val maxLoopsIterations = 250
 
-    private case class BoardCoordinate(val file: Int, val rank : Int){
+    private case class BoardCoordinate(file: Int, rank : Int){
         if (! (0 until 8).contains(file) ) throw new IllegalArgumentException()
         if (! (0 until 8).contains(rank) ) throw new IllegalArgumentException()
     }
@@ -37,7 +37,7 @@ class PositionGenerator(private val constraints : PositionConstraints) {
         if (wantedCellOccupied) return null
 
         builtPosition.setPiece(pieceToAdd, pieceCell)
-        return builtPosition
+        builtPosition
     }
 
     private def enemyKingInChessFor(position: Board, playerHasWhite: Boolean) : Boolean = {
@@ -61,7 +61,7 @@ class PositionGenerator(private val constraints : PositionConstraints) {
 
         Logger.getLogger("BasicChessEndgamesTrainer").info(s"Generated position is '${_position.getFEN() }'")
 
-        return _position.getFEN()
+        _position.getFEN()
     }
 
     private var playerKingCell = BoardCoordinate(file = 0, rank = 0)
@@ -149,7 +149,8 @@ class PositionGenerator(private val constraints : PositionConstraints) {
             val savedCoordinates = scala.collection.mutable.ArrayBuffer[BoardCoordinate]()
             (0 until count).foreach { index =>
                 var loopSuccess = false
-                for (loopIter <-  0 to maxLoopsIterations) {
+                var loopIter = 0
+                while (!loopSuccess && loopIter < maxLoopsIterations) {
                     val isAPieceOfPlayer = kind.side == Side.Player
                     val isWhitePiece = (isAPieceOfPlayer && playerHasWhite) ||
                      (!isAPieceOfPlayer && !playerHasWhite)
@@ -162,6 +163,7 @@ class PositionGenerator(private val constraints : PositionConstraints) {
                                     rank = pieceCell.rank, file = pieceCell.file
                             )
                     )
+
                     if (tempPosition != null && !enemyKingInChessFor(tempPosition, playerHasWhite)) {
 
                         // If for any previous piece of same kind, mutual constraint is not respected, will loop another time
@@ -182,6 +184,7 @@ class PositionGenerator(private val constraints : PositionConstraints) {
                                         BoardLocation(playerKingCell.file, playerKingCell.rank),
                                         BoardLocation(oppositeKingCell.file, oppositeKingCell.rank),
                                         playerHasWhite)){
+                                    loopSuccess = true
                                     _position.loadFromFEN(tempPosition.getFEN)
                                     savedCoordinates += pieceCell
                                 }
@@ -191,6 +194,7 @@ class PositionGenerator(private val constraints : PositionConstraints) {
                         }
 
                     }
+                    loopIter += 1
                 }
                 if (!loopSuccess) throw new PositionGenerationLoopException()
             }
