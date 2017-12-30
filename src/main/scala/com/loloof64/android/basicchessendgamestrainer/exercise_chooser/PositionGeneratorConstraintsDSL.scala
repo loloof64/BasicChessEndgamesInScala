@@ -107,11 +107,11 @@ object ConstraintsTypes {
         val Computer = new Side(1)
     }
 
-    case class PieceKind(val pieceType: PieceType, val side: Side){
+    case class PieceKind(pieceType: PieceType, side: Side){
         @silent
         def inCount(instances: Int) = PieceKindCount(pieceKind = this, count = instances)
     }
-    case class PieceKindCount(val pieceKind: PieceKind, val count: Int)
+    case class PieceKindCount(pieceKind: PieceKind, count: Int)
 }
 
 object ConstraintsConstants {
@@ -135,15 +135,15 @@ object ConstraintsConstants {
     val Rank7 = 6
     val Rank8 = 7
 
-    val Pawn = PieceType.Pawn
-    val Knight = PieceType.Knight
-    val Bishop = PieceType.Bishop
-    val Rook = PieceType.Rook
-    val Queen = PieceType.Queen
-    val King = PieceType.King
+    val Pawn:PieceType = PieceType.Pawn
+    val Knight:PieceType = PieceType.Knight
+    val Bishop:PieceType = PieceType.Bishop
+    val Rook:PieceType = PieceType.Rook
+    val Queen:PieceType = PieceType.Queen
+    val King:PieceType = PieceType.King
 
-    val Player = Side.Player
-    val Computer = Side.Computer
+    val Player:Side = Side.Player
+    val Computer:Side = Side.Computer
 }
 
 import ConstraintsTypes._

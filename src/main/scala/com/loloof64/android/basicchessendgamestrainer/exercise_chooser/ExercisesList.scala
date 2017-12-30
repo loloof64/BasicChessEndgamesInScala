@@ -104,7 +104,7 @@ object Exercises {
 
         otherPieceGlobalConstraint = Map(
             (Pawn belongingTo Computer) -> {(pieceLocation, playerKingLocation, computerKingLocation, playerHasWhite) =>
-                (if (playerHasWhite) (Rank3 to Rank5) else (Rank4 to Rank6)).contains(pieceLocation.rank) &&
+                (if (playerHasWhite) Rank3 to Rank5 else Rank4 to Rank6).contains(pieceLocation.rank) &&
                 (pieceLocation.file == playerKingLocation.file)
             }
         )
@@ -169,4 +169,4 @@ object Exercises {
 
 
 
-case class ExerciseInfo(val constraints: PositionConstraints, val textId: Int, val mustWin: Boolean)
+case class ExerciseInfo(constraints: PositionConstraints, textId: Int, mustWin: Boolean)

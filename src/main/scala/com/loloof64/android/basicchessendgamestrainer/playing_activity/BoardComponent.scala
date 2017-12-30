@@ -10,12 +10,12 @@ import com.loloof64.android.basicchessendgamestrainer.R
 import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.BoardUtils.buildSquare
 import com.github.ghik.silencer.silent
 
-case class SquareCoordinates(val file: Int, val rank: Int)
+case class SquareCoordinates(file: Int, rank: Int)
 
 abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAttr: Int) extends View(context, attrs, defStyleAttr) {
 
     @silent
-    def getColor(colorResId: Int): Int = getResources().getColor(colorResId)
+    def getColor(colorResId: Int): Int = getResources.getColor(colorResId)
 
     def this(context: Context, attrs: AttributeSet) { this(context, attrs, 0) }
     def this(context: Context) { this(context, null, 0) }
@@ -25,17 +25,17 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
     typedArray.recycle()
     private val minAvailableSpacePercentage = computed
 
-    def computeMinAvailableSpacePercentage():Int = minAvailableSpacePercentage
+    def computeMinAvailableSpacePercentage:Int = minAvailableSpacePercentage
 
-    protected def relatedPosition() : Board
+    protected def relatedPosition : Board
     protected def replacePositionWith(positionFEN : String)
 
     protected var reversed = false
     private val rectPaint = new Paint()
     private val fontPaint = new Paint()
 
-    def highlightedStartCell() : SquareCoordinates
-    def highlightedTargetCell() : SquareCoordinates
+    def highlightedStartCell : SquareCoordinates
+    def highlightedTargetCell : SquareCoordinates
 
     def reverse() {
         reversed = !reversed
@@ -52,10 +52,10 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
         val widthSize = View.MeasureSpec.getSize(widthMeasureSpec)
         val heightSize = View.MeasureSpec.getSize(heightMeasureSpec)
 
-        val minSpacePercentage = computeMinAvailableSpacePercentage()
+        val minSpacePercentage = computeMinAvailableSpacePercentage
 
-        val widthAdjusted = (widthSize * minSpacePercentage / 100).max(getSuggestedMinimumWidth())
-        val heightAdjusted = (heightSize * minSpacePercentage / 100).max(getSuggestedMinimumHeight())
+        val widthAdjusted = (widthSize * minSpacePercentage / 100).max(getSuggestedMinimumWidth)
+        val heightAdjusted = (heightSize * minSpacePercentage / 100).max(getSuggestedMinimumHeight)
 
         val desiredWidth = widthAdjusted - (widthAdjusted % 9)
         val desiredHeight = heightAdjusted - (heightAdjusted % 9)
@@ -66,7 +66,7 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
 
     private def drawBackground(canvas: Canvas) {
         rectPaint.setColor(getColor(R.color.chess_board_background_color))
-        canvas.drawRect(0.toFloat, 0.toFloat, getMeasuredWidth().toFloat, getMeasuredHeight().toFloat, rectPaint)
+        canvas.drawRect(0.toFloat, 0.toFloat, getMeasuredWidth.toFloat, getMeasuredHeight.toFloat, rectPaint)
     }
 
     private def drawCells(canvas: Canvas, cellSize: Int) {
@@ -111,9 +111,9 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
     }
 
     private def drawPieces(canvas: Canvas, cellSize: Int) {
-        for (cellRank <- (0 until 8)) {
-            for (cellFile <- (0 until 8)) {
-                val piece = relatedPosition().getPiece(buildSquare(cellRank, cellFile))
+        for (cellRank <- 0 until 8) {
+            for (cellFile <- 0 until 8) {
+                val piece = relatedPosition.getPiece(buildSquare(cellRank, cellFile))
                 if (piece != Piece.NONE) {
                     val imageRes = piece match {
                         case Piece.WHITE_PAWN => R.drawable.chess_pl
@@ -133,7 +133,7 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
                     val x = (cellSize * (0.5 + (if (reversed) 7 - cellFile else cellFile))).toInt
                     val y = (cellSize * (0.5 + (if (reversed) cellRank else 7 - cellRank))).toInt
 
-                    val drawable = VectorDrawableCompat.create(context.getResources(), imageRes, null)
+                    val drawable = VectorDrawableCompat.create(context.getResources, imageRes, null)
                     drawable.setBounds(new Rect(x, y, x + cellSize, y + cellSize))
                     drawable.draw(canvas)
                 }
@@ -142,7 +142,7 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
     }
 
     private def drawPlayerTurn(canvas: Canvas, cellSize: Int) {
-        val color = if (relatedPosition().getSideToMove() == Side.WHITE) R.color.chess_board_white_player_turn_color else R.color.chess_board_black_player_turn_color
+        val color = if (relatedPosition.getSideToMove == Side.WHITE) R.color.chess_board_white_player_turn_color else R.color.chess_board_black_player_turn_color
         val location = (8.5 * cellSize).toFloat
         val locationEnd = (location + cellSize * 0.5).toFloat
         rectPaint.setColor(getColor(color))
@@ -150,7 +150,7 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
     }
 
     private def drawHighlightedCells(canvas: Canvas, cellSize: Int) {
-        val startCellToHighlight = highlightedStartCell()
+        val startCellToHighlight = highlightedStartCell
         if (startCellToHighlight != null){
             val fileIndex = startCellToHighlight.file
             val rankIndex = startCellToHighlight.rank
@@ -161,7 +161,7 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
             canvas.drawRect(x, y, x + cellSize, y + cellSize, rectPaint)
         }
 
-        val targetCellToHighlight = highlightedTargetCell()
+        val targetCellToHighlight = highlightedTargetCell
         if (targetCellToHighlight != null) {
             val fileIndex = targetCellToHighlight.file
             val rankIndex = targetCellToHighlight.rank
@@ -174,7 +174,7 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
     }
 
     private def drawCurrentTargetCellGuidingAxis(canvas: Canvas, cellSize: Int){
-        val targetCellToHighlight = highlightedTargetCell()
+        val targetCellToHighlight = highlightedTargetCell
         if (targetCellToHighlight != null) {
             val fileIndex = targetCellToHighlight.file
             val rankIndex = targetCellToHighlight.rank
@@ -184,8 +184,8 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
             rectPaint.setColor(getColor(R.color.chess_board_move_current_cell_highlighting))
             rectPaint.setStrokeWidth(cellSize * 0.1f)
 
-            canvas.drawLine(0f, y, getWidth().toFloat, y, rectPaint)
-            canvas.drawLine(x, 0f, x, getHeight().toFloat, rectPaint)
+            canvas.drawLine(0f, y, getWidth.toFloat, y, rectPaint)
+            canvas.drawLine(x, 0f, x, getHeight.toFloat, rectPaint)
         }
     }
 
@@ -200,10 +200,10 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
 
         val paint = new Paint()
 
-        val fromPointX = (cellSize * (if (reversed) (8 - from.file) else (from.file+1))).toFloat
-        val fromPointY = (cellSize * (if (reversed) (from.rank+1) else (8 - from.rank))).toFloat
-        val toPointX = (cellSize * (if (reversed) (8 - to.file) else (to.file+1))).toFloat
-        val toPointY = (cellSize * (if (reversed) (to.rank+1) else (8 - to.rank))).toFloat
+        val fromPointX = (cellSize * (if (reversed) 8 - from.file else from.file+1)).toFloat
+        val fromPointY = (cellSize * (if (reversed) from.rank+1 else 8 - from.rank)).toFloat
+        val toPointX = (cellSize * (if (reversed) 8 - to.file else to.file+1)).toFloat
+        val toPointY = (cellSize * (if (reversed) to.rank+1 else 8 - to.rank)).toFloat
 
         val angleDegrees = Math.toDegrees(Math.atan2(toPointY.toDouble - fromPointY.toDouble,
                 toPointX.toDouble - fromPointX.toDouble)).toFloat
@@ -231,14 +231,14 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
 
 
     override def onDraw(canvas: Canvas) {
-        val cellSize = getMeasuredWidth().min(getMeasuredHeight()) / 9
+        val cellSize = getMeasuredWidth.min(getMeasuredHeight) / 9
         fontPaint.setTextSize((cellSize * 0.4).toFloat)
         fontPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
 
         drawBackground(canvas)
         drawCells(canvas, cellSize)
         drawLetters(canvas, cellSize)
-        if (highlightedTargetCell() != null) drawHighlightedCells(canvas, cellSize)
+        if (highlightedTargetCell != null) drawHighlightedCells(canvas, cellSize)
         drawPieces(canvas, cellSize)
         drawPlayerTurn(canvas, cellSize)
         drawHighlightedMove(canvas, cellSize)
@@ -247,9 +247,9 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
 
     def setHighlightedMove(fromFile: Int, fromRank: Int,
                            toFile: Int, toRank: Int){
-        _highlightedMoveFrom = new SquareCoordinates(file =  if ((0 to 7).contains(fromFile)) fromFile else -1,
+        _highlightedMoveFrom = SquareCoordinates(file =  if ((0 to 7).contains(fromFile)) fromFile else -1,
                 rank = if ((0 to 7).contains(fromRank)) fromRank else -1)
-        _highlightedMoveTo = new SquareCoordinates(file = if ((0 to 7).contains(toFile)) toFile else -1,
+        _highlightedMoveTo = SquareCoordinates(file = if ((0 to 7).contains(toFile)) toFile else -1,
                 rank = if ((0 to 7).contains(toRank)) toRank else -1)
         invalidate()
     }
@@ -260,15 +260,15 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
         invalidate()
     }
 
-    def toFEN(): String = relatedPosition().getFEN()
+    def toFEN: String = relatedPosition.getFEN()
 
     def setFromFen(boardFen: String) {
         replacePositionWith(boardFen)
         invalidate()
     }
 
-    private var _highlightedMoveFrom:SquareCoordinates = null
-    private var _highlightedMoveTo:SquareCoordinates = null
+    private var _highlightedMoveFrom:SquareCoordinates = _
+    private var _highlightedMoveTo:SquareCoordinates = _
 
 
 }

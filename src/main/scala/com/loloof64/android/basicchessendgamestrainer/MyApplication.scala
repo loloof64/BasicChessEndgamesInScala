@@ -15,10 +15,10 @@ class MyApplication extends Application(){
 }
 
 object MyApplication {
-    def getApplicationContext() = appContext
+    def getApplicationContext: Context = appContext
     def setApplicationContext(ctx: Context) {
         appContext = ctx
     }
 
-    var appContext: Context = null
+    var appContext: Context = _
 }

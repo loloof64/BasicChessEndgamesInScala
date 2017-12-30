@@ -10,9 +10,9 @@ import com.loloof64.android.basicchessendgamestrainer.R
 import java.lang.ref.WeakReference
 import com.github.ghik.silencer.silent
 
-case class RowInput(val san:String, val relatedFen: String, val moveToHighlight: MoveToHighlight)
-case class MoveToHighlight(val startFile: Int, val startRank : Int,
-                           val endFile: Int, val endRank : Int)
+case class RowInput(san:String, relatedFen: String, moveToHighlight: MoveToHighlight)
+case class MoveToHighlight(startFile: Int, startRank : Int,
+                           endFile: Int, endRank : Int)
 
 abstract class ItemClickListener {
     def onClick(weakRefContext: WeakReference[Context], position: Int,
@@ -28,37 +28,39 @@ class MovesListAdapter(private val weakRefContext: WeakReference[Context], priva
     import scala.collection.mutable.ArrayBuffer
 
     @silent
-    private def getColor(colorResId: Int): Int = MyApplication.getApplicationContext().getResources().getColor(colorResId)
+    private def getColor(colorResId: Int): Int = MyApplication.getApplicationContext.getResources.getColor(colorResId)
 
     override def onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = {
-        val layout = LayoutInflater.from(parent.getContext()).inflate(
+        val layout = LayoutInflater.from(parent.getContext).inflate(
                 R.layout.playing_activity_moves_list_single_item, parent, false).asInstanceOf[LinearLayout]
         val txtView = layout.findViewById(R.id.moves_list_view_item).asInstanceOf[TextView]
-        val font = Typeface.createFromAsset(MyApplication.appContext.getAssets(), "FreeSerif.ttf")
+        val font = Typeface.createFromAsset(MyApplication.appContext.getAssets, "FreeSerif.ttf")
         txtView.setTypeface(font)
 
         layout.removeView(txtView)
-        return new ViewHolder(txtView)
+        new ViewHolder(txtView)
     }
 
     override def onBindViewHolder(holder: ViewHolder, position: Int) {
-        val currentPosition = holder.getAdapterPosition()
+        val currentPosition = holder.getAdapterPosition
         holder.textView.setText( inputsList(currentPosition).san )
         holder.textView.setBackgroundColor(getColor(
                 if (position == _selectedNavigationItem && _switchingPositionFeatureActive) R.color.moves_history_cell_selected_color
                 else R.color.moves_history_cell_standard_color
         ))
         if (position%3 > 0) {
-            holder.textView.setOnClickListener(new View.OnClickListener { def onClick(v:View) {
+            holder.textView.setOnClickListener(new View.OnClickListener {
+              override def onClick(view: View): Unit = {
                 _selectedNavigationItem = currentPosition
                 updateHostView()
                 update()
-            }})
+              }
+            })
         }
     }
 
-    override def getItemCount(): Int = {
-        return inputsList.size
+    override def getItemCount: Int = {
+        inputsList.size
     }
 
     def addPosition(san: String, fen: String, moveToHighlight: MoveToHighlight){
@@ -107,7 +109,7 @@ class MovesListAdapter(private val weakRefContext: WeakReference[Context], priva
 
     def switchingPosition: Boolean = _switchingPositionFeatureActive
     def switchingPosition_=(value: Boolean) {
-        if (inputsList.size > 0) {
+        if (inputsList.nonEmpty) {
             _switchingPositionFeatureActive = value
             _selectedNavigationItem = inputsList.size - 1
             updateHostView()
@@ -133,7 +135,7 @@ class MovesListAdapter(private val weakRefContext: WeakReference[Context], priva
     private def updateHostView(){ // switch the current position in host view (Playing activity)
         val relatedFen = inputsList(_selectedNavigationItem).relatedFen
         val moveToHighlight = inputsList(_selectedNavigationItem).moveToHighlight
-        if (!(relatedFen.isEmpty) && _switchingPositionFeatureActive) {
+        if (!relatedFen.isEmpty && _switchingPositionFeatureActive) {
             itemClickListener.onClick(weakRefContext, _selectedNavigationItem, relatedFen, moveToHighlight)
         }
     }

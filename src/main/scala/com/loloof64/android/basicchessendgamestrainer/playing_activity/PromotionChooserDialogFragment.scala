@@ -21,7 +21,7 @@ object PromotionPieceChooserDialogFragment {
         args.putString(TitleKey, title)
         args.putBoolean(WhiteToPlayKey, whiteToPlay)
         dialog.setArguments(args)
-        return dialog
+        dialog
     }
 
     trait Listener {
@@ -33,25 +33,25 @@ class PromotionPieceChooserDialogFragment extends DialogFragment() {
 
     import PromotionPieceChooserDialogFragment._
 
-    private var listener : Listener = null
+    private var listener : Listener = _
 
-    private var promotionChooserQueenButton : ImageButton = null
-    private var promotionChooserRookButton : ImageButton = null
-    private var promotionChooserBishopButton : ImageButton = null
-    private var promotionChooserKnightButton : ImageButton = null
+    private var promotionChooserQueenButton : ImageButton = _
+    private var promotionChooserRookButton : ImageButton = _
+    private var promotionChooserBishopButton : ImageButton = _
+    private var promotionChooserKnightButton : ImageButton = _
 
-    private var queenPromotionListener: PromotionButtonOnClickListener = null
-    private var rookPromotionListener: PromotionButtonOnClickListener = null
-    private var bishopPromotionListener: PromotionButtonOnClickListener = null
-    private var knightPromotionListener: PromotionButtonOnClickListener = null
+    private var queenPromotionListener: PromotionButtonOnClickListener = _
+    private var rookPromotionListener: PromotionButtonOnClickListener = _
+    private var bishopPromotionListener: PromotionButtonOnClickListener = _
+    private var knightPromotionListener: PromotionButtonOnClickListener = _
 
     override def onCreateDialog(savedInstanceState: Bundle): Dialog = {
-        val title = getArguments().getString(PromotionPieceChooserDialogFragment.TitleKey)
+        val title = getArguments.getString(PromotionPieceChooserDialogFragment.TitleKey)
 
-        val whiteToPlay = getArguments().getBoolean(WhiteToPlayKey)
+        val whiteToPlay = getArguments.getBoolean(WhiteToPlayKey)
 
         val nullParent: ViewGroup = null
-        val rootView = getActivity().getLayoutInflater().inflate(R.layout.promotion_chooser_dialog, nullParent)
+        val rootView = getActivity.getLayoutInflater.inflate(R.layout.promotion_chooser_dialog, nullParent)
 
         promotionChooserQueenButton = rootView.findViewById(R.id.promotion_chooser_queen_button).asInstanceOf[ImageButton]
         promotionChooserRookButton = rootView.findViewById(R.id.promotion_chooser_rook_button).asInstanceOf[ImageButton]
@@ -77,12 +77,12 @@ class PromotionPieceChooserDialogFragment extends DialogFragment() {
         promotionChooserBishopButton.setOnClickListener(bishopPromotionListener)
         promotionChooserKnightButton.setOnClickListener(knightPromotionListener)
 
-        val dialog = new Builder(getActivity()).setTitle(title).setView(rootView).create()
+        val dialog = new Builder(getActivity).setTitle(title).setView(rootView).create()
         queenPromotionListener.setDialog(dialog)
         rookPromotionListener.setDialog(dialog)
         bishopPromotionListener.setDialog(dialog)
         knightPromotionListener.setDialog(dialog)
-        return dialog
+        dialog
     }
 
     override def onAttach(context: Context) {
@@ -108,5 +108,5 @@ class PromotionButtonOnClickListener(listener: PromotionPieceChooserDialogFragme
     }
 
     private val refListener = new WeakReference(listener)
-    private var refDialog: WeakReference[Dialog] = null
+    private var refDialog: WeakReference[Dialog] = _
 }

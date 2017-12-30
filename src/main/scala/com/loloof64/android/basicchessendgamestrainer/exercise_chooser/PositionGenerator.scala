@@ -8,7 +8,7 @@ import com.github.bhlangonijr.chesslib.{Side => LibSide}
 class PositionGenerationLoopException extends Exception()
 
 object BoardUtils {
-    def buildSquare(rank: Int, file: Int) =
+    def buildSquare(rank: Int, file: Int):Square =
         Square.encode(Rank.values()(rank), File.values()(file))
 
 }
