@@ -87,7 +87,7 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
         val fileCoords = if (reversed) "HGFEDCBA" else "ABCDEFGH"
         val rankCoords = if (reversed) "12345678" else "87654321"
 
-        for ((file, letter) <- fileCoords.zipWithIndex) {
+        for ((letter, file) <- fileCoords.zipWithIndex) {
             val y1 = (cellSize * 0.4).toFloat
             val y2 = (cellSize * 8.9).toFloat
             val x = (cellSize * 0.9 + file * cellSize).toFloat
@@ -98,7 +98,7 @@ abstract class BoardComponent(context: Context, attrs: AttributeSet, defStyleAtt
             canvas.drawText(s"$letter", x, y2, fontPaint)
         }
 
-        for ((rank, digit) <- rankCoords.zipWithIndex) {
+        for ((digit, rank) <- rankCoords.zipWithIndex) {
             val x1 = (cellSize * 0.15).toFloat
             val x2 = (cellSize * 8.65).toFloat
             val y = (cellSize * 1.2 + rank * cellSize).toFloat
