@@ -49,7 +49,7 @@ case class PlayableAgainstComputerBoardComponent(context: Context, attrs: Attrib
                 x += 2
             }
         }
-        return false
+        false
     }
 
     override def consumeMove(move: Move) {
@@ -369,14 +369,14 @@ case class PlayableAgainstComputerBoardComponent(context: Context, attrs: Attrib
                 }
                 else {
                         if (isWhiteTurnBeforeMove) {
-                            p.addPositionInMovesList(moveNumberBeforeMoveCommit.toString, "",
-                                    MoveToHighlight(-1,-1,-1,-1))
-                            p.addPositionInMovesList(
-                                    san = moveFan,
-                                    fen = fenAfterMove,
-                                    moveToHighlight = moveToHighlight
-                            )
+                          p.addPositionInMovesList(moveNumberBeforeMoveCommit.toString, "",
+                            MoveToHighlight(-1, -1, -1, -1))
                         }
+                        p.addPositionInMovesList(
+                                san = moveFan,
+                                fen = fenAfterMove,
+                                moveToHighlight = moveToHighlight
+                        )
                 }
 
         }

@@ -53,7 +53,7 @@ object EngineInteraction {
             )
         }
 
-        val bestMoveLineRegex = """^bestmove ([a-h][1-8][a-h][1-8])""".r.unanchored
+        val bestMoveLineRegex = """bestmove ([a-h][1-8][a-h][1-8])""".r.unanchored
         val scoreRegex = """score (cp|mate) (\d+)""".r.unanchored
 
         val scoreMatch = scoreRegex.findFirstMatchIn(outputString)
