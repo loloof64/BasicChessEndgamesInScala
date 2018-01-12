@@ -5,12 +5,13 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.os.{Handler, Looper}
 import com.github.bhlangonijr.chesslib.{Board, Piece, Side, Square}
-import com.github.bhlangonijr.chesslib.move.{Move, MoveGenerator, MoveList}
+import com.github.bhlangonijr.chesslib.move.{Move, MoveConversionException, MoveGenerator, MoveList}
 import com.loloof64.android.basicchessendgamestrainer.PlayingActivity
 import com.loloof64.android.basicchessendgamestrainer.exercise_chooser.BoardUtils.buildSquare
 import com.loloof64.android.basicchessendgamestrainer.R
 import java.lang.Math.abs
 import java.util.logging.Logger
+
 import com.github.ghik.silencer.silent
 
 case class PromotionInfo(startFile: Int, startRank: Int,
@@ -24,11 +25,15 @@ case class PlayableAgainstComputerBoardComponent(context: Context, attrs: Attrib
                              defStyleAttr: Int) extends BoardComponent(context, attrs, defStyleAttr) with SimpleUciObserver{
 
     private def moveStringToFAN(positionStr: String, move: Move): String = {
-        val board = new Board()
-        board.loadFromFEN(positionStr)
-        val moveList = new MoveList(board.getFEN())
-        moveList.add(move)
-        moveList.toFANArray()(0)
+        try {
+          val board = new Board()
+          board.loadFromFEN(positionStr)
+          val moveList = new MoveList(board.getFEN())
+          moveList.add(move)
+          moveList.toFANArray()(0)
+        } catch {
+          case e:MoveConversionException => throw new IllegalArgumentException(s"Wrong move $move for position $positionStr !")
+        }
     }
 
     def isDrawByRepetitions:Boolean = {
@@ -240,6 +245,7 @@ case class PlayableAgainstComputerBoardComponent(context: Context, attrs: Attrib
                         _highlightedTargetCell = SquareCoordinates(file = file, rank = rank)
                         invalidate()
                     }
+                case _ =>
 
             }
         }

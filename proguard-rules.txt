@@ -1,8 +1,6 @@
--dontoptimize
--dontobfuscate
--dontpreverify
 -dontwarn scala.**
--ignorewarnings
+-dontwarn com.google.protobuf.**
+-dontwarn sun.misc.Unsafe
 # temporary workaround; see Scala issue SI-5397
 -keep class scala.collection.SeqLike {
     public protected *;

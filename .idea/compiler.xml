@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel target="1.8">
+      <module name="android.arch.lifecycle-runtime-1.0.3" target="1.8" />
+      <module name="basicchessendgames" target="1.8" />
+      <module name="com.android.support-animated-vector-drawable-27.0.2" target="1.8" />
+      <module name="com.android.support-appcompat-v7-27.0.2" target="1.8" />
+      <module name="com.android.support-design-27.0.2" target="1.8" />
+      <module name="com.android.support-recyclerview-v7-27.0.2" target="1.8" />
+      <module name="com.android.support-support-compat-27.0.2" target="1.8" />
+      <module name="com.android.support-support-core-ui-27.0.2" target="1.8" />
+      <module name="com.android.support-support-core-utils-27.0.2" target="1.8" />
+      <module name="com.android.support-support-fragment-27.0.2" target="1.8" />
+      <module name="com.android.support-support-media-compat-27.0.2" target="1.8" />
+      <module name="com.android.support-support-v4-27.0.2" target="1.8" />
+      <module name="com.android.support-support-vector-drawable-27.0.2" target="1.8" />
+      <module name="com.android.support-transition-27.0.2" target="1.8" />
+      <module name="com.android.support.constraint-constraint-layout-1.1.0-beta4" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_STRING" value="-bootclasspath $USER_HOME$/Android/Sdk/platforms/android-27/android.jar -g" />
   </component>

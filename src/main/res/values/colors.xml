@@ -17,4 +17,6 @@
     <color name="moves_history_cell_standard_color">#CDCDCD</color>
     <color name="moves_history_cell_selected_color">#FFDD26</color>
     <color name="circular_progressbar_color">#c91512</color>
+    <color name="activity_exercise_chooser_tab_selected">#7ad6ed</color>
+    <color name="activity_exercise_chooser_tab_not_selected">#183bd7</color>
 </resources>

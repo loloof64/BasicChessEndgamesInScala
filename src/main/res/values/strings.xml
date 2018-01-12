@@ -55,7 +55,7 @@ of endgame.[CR][CR]
 [TAB]You can find the project files at https://goo.gl/JPoRxf.[CR][CR]
 
 
-[TAB]Developed by Laurent Bernabé in 2017. This project use adapted stockfish 8 chess engine(https://goo.gl/ABv2wS),
+[TAB]Developed by Laurent Bernabé (2017-2018). This project use adapted stockfish 8 chess engine(https://goo.gl/ABv2wS),
         source code of chessLib forked by Laurent Bernabé
         (https://github.com/loloof64/chesslib),
         the FreeSerif ttf font (https://fr.fonts2u.com/free-serif.police)
@@ -80,4 +80,6 @@ of endgame.[CR][CR]
     <string name="kings_constraints">Kings</string>
     <string name="other_pieces_count_constraints">Other pieces count</string>
     <string name="other_pieces_mutual_constraints">Other pieces mutual constraints</string>
+    <string name="predefined_exercises">Predefined</string>
+    <string name="custom_exercises">Customs</string>
 </resources>

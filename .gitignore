@@ -5,11 +5,10 @@ bin/
 local.properties
 proguard-sbt.txt
 .idea/
-.idea/modules
+.idea/modules/
 .gradle/
 build.gradle
 src/androidTest/androidTest.iml
 src/main/gen/
 src/main/main.iml
-my-android-keystore.jks
-loloof64_android.jks
+basic_chess_endgames.keystore.jks
